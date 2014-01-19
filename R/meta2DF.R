@@ -178,7 +178,8 @@ meta2DF.metabin <- function(meta, add = NULL, rowOrder = NULL,
   }
   else{
     output <- list(DF = DF, summary.fixed = summary.fixed,
-                   summary.random = summary.random, hetero = hetero)
+                   summary.random = summary.random, hetero = hetero,
+                   title = title, subtitle = subtitle)
     class(output) <- c("metabinDF", "metaDF")
   }
   output  
