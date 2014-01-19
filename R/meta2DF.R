@@ -30,6 +30,8 @@ forestDF <- function(object, study, n.e, event.e, mean.e, sd.e,
   DF
 }
 
+
+
 #### set up generic function 
 meta2DF <- function(object, ...) UseMethod("meta2DF")
 
@@ -94,8 +96,8 @@ meta2DF.metabin <- function(meta, add = NULL, rowOrder = NULL,
   
   # specify row orders
   if (!is.null(rowOrder)) {
-    order <- order(DF[, rowOrder], ...)
-    DF <- DF[order, ]
+    Order <- order(DF[, rowOrder], ...)
+    DF <- DF[Order, ]
   }
   
   ## step 4: heterogeneity information
@@ -115,7 +117,7 @@ meta2DF.metabin <- function(meta, add = NULL, rowOrder = NULL,
   ## step 5: Grouped Studies
   if (!is.null(meta$byvar)){
     Group <- list()
-    gp <- meta$byvar
+    gp <- DF["group"]
     for (i in 1:max(gp)){
       ## set up of the main DF for the group
       df <- DF[gp == i, ]
@@ -202,7 +204,7 @@ meta2DF.metacont <- function(meta, add = NULL, rowOrder = NULL,
   # fixed effect
   summary.fixed <- forestDF(meta, study = "Fixed effect",
                             n.e = sum(meta$n.e), mean.e = NA, sd.e = NA,
-                            n.c = sum(meta$n.c), mean.c = NA, sd.e = NA,
+                            n.c = sum(meta$n.c), mean.c = NA, sd.c = NA,
                             effect = meta$TE.fixed, se = meta$seTE.fixed,
                             w.fixed = 100, w.random = 0, mean = meta$TE.fixed,
                             lower = sum.meta$fixed$lower, 
@@ -249,7 +251,7 @@ meta2DF.metacont <- function(meta, add = NULL, rowOrder = NULL,
   ## step 5: grouped studies
   if (!is.null(meta$byvar)){
     Group <- list()
-    gp <- meta$byvar
+    gp <- DF["group"]
     for (i in 1:max(gp)){
       # set up of the main DF for the group
       df <- DF[gp == i, ]
@@ -308,8 +310,9 @@ meta2DF.metacont <- function(meta, add = NULL, rowOrder = NULL,
   }
   else{
     output <- list(DF = DF, summary.fixed = summary.fixed,
-                   summary.random = summary.random, hetero = hetero)
-    class(output) <_ c("metacontDF", "metaDF")
+                   summary.random = summary.random, hetero = hetero,
+                   title = title, subtitle = subtitle)
+    class(output) <- c("metacontDF", "metaDF")
   }
   output
 }
