@@ -1,6 +1,7 @@
 ## metplotfunction
 metaplotfunction <- function(path){
-  require(rmeta, meta)
+  require(rmeta)
+  require(meta)
   data(Olkin95)
   data(Fleiss93cont)
   source(paste(path,"/meta2DF.r", sep=""))
