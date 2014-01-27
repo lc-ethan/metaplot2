@@ -104,3 +104,83 @@ roundingCols <- function(df, newCols, roundCols, isSummary) {
   list(df = df, roundCols = round.cols)
 }
 
+addStatsLabel <- function(hetero, stats, newStats) {
+  if (!missing(stats)) {
+    if (!all(stats %in% c(names(hetero), "I2.ci", "H.ci"))) {
+      stop("unexpected name listed under argument 'stats'")
+    }
+    
+    if (!all(sapply(newStats, inherits, what = "statsDesc"))) {
+      stop("unexpected format listed under 'newStats'")
+    }  
+    
+    default.format <- list()
+    if (any(stats %in% "Q") && !any(names(newStats) %in% "Q")) {
+      default.format$Q <- list(format = paste("Chi-square =", "% .", 2, "f", sep = ""), 
+                               statsNames = "Q")
+    }
+    
+    if (any(stats %in% "p") && !any(names(newStats) %in% "p")) {
+      default.format$p <- list(format = paste("(p =", "% .", 3, "f", ")", sep = ""), 
+                               statsNames = "p")
+    }
+    
+    if (any(stats %in% "df") && !any(names(newStats) %in% "df")) {
+      default.format$df <- list(format = paste("df =", "% .", 0, "f", sep = ""), 
+                                statsNames = "df")  
+    }
+    
+    if (any(stats %in% "tau2") && !any(names(newStats) %in% "tau2")) {
+      default.format$tau2 <- list(format = paste("tau-squared =", "% .", 4, "f", sep = ""), 
+                                  statsNames = "tau2")
+    }
+    
+    if (any(stats %in% "H") && !any(names(newStats) %in% "H")) {
+      default.format$H <- list(format = paste("H =", "% .", 2, "f", sep = ""), statsNames = "H")
+    }
+    
+    if (any(stats %in% c("H.ci", "H.lower", "H.upper")) && 
+          !any(names(newStats) %in% c("H.ci", "H.lower", "H.upper"))) {
+      default.format$H.ci <- list(format = paste("[", "% .", 2,  "f",  ", ", 
+                                                 "% .", 2, "f", "]", sep = ""), 
+                                  statsNames = c("H.lower", "H.upper"))
+    }
+    
+    if (any(stats %in% "I2") && !any(names(newStats) %in% "I2")) {
+      default.format$I2 <- list(format = paste("I-Squared =", "% .", 2, "f", "%%", sep = ""), 
+                                statsNames = "I2")
+    }
+    
+    if (any(stats %in% c("I2.ci", "I2.lower", "I2.upper")) && 
+          !any(names(newStats) %in% c("I2.ci", "I2.lower", "I2.upper"))) {
+      default.format$I2.ci <- list(format = paste("[", "% .", 2,  "f", "%%",  ", ", "% .", 2,
+                                                  "f", "%%", "]", sep = ""), 
+                                   statsNames = c("I2.lower", "I2.upper"))
+    }
+    format <- lapply(default.format, do.call, what = "makeStatsDesc")
+    format <- c(format, newStats)
+  }
+  else { 
+    default.format <- list()
+    
+    default.format$Q <- list(format = paste("Chi-square =", "% .", 2, "f", sep = ""), 
+                             statsNames = "Q")
+    
+    default.format$p <- list(format = paste("(p =", "% .", 3, "f", ")", sep = ""), 
+                             statsNames = "p")
+    
+    default.format$df <- list(format = paste("df =", "% .", 0, "f", sep = ""), 
+                              statsNames = "df")
+    
+    format <- lapply(default.format, do.call, what = "makeStatsDesc")
+    format <- c(format, newStats)
+  }
+  lapply(format, makeStats, hetero = hetero)
+}
+
+addHetero <- function(statsLabel) {
+  format <- paste("Heterogeneity: ", 
+                  paste(rep("%s", length(statsLabel)), collapse = " "), sep ="")
+  args <- c(fmt = format, statsLabel)
+  do.call("sprintf", args) 
+}
