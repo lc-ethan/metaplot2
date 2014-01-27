@@ -134,6 +134,7 @@ meta2DF.metabin <- function(meta, add = NULL, rowOrder = NULL,
                               e.lower = exp(sum.meta$within.fixed$lower[i]),
                               e.upper = exp(sum.meta$within.fixed$upper[i]),
                               summary = TRUE)
+      
       # random effect 
       group.random <- forestDF(meta, study = "Random Effect",
                                n.e = NA, event.e = NA, 
@@ -158,6 +159,7 @@ meta2DF.metabin <- function(meta, add = NULL, rowOrder = NULL,
                     I2 = sum.meta$I2.w$TE[i],
                     I2.lower = sum.meta$I2.w$lower[i],
                     I2.upper = sum.meta$I2.w$upper[i])
+      
       # set up the group
       Group[[i]] <- list(DF = df, summary.fixed = group.fixed,
                          summary.random = group.random, hetero = hetero.w)
@@ -269,6 +271,7 @@ meta2DF.metacont <- function(meta, add = NULL, rowOrder = NULL,
                               lower = sum.meta$within.fixed$lower[i],
                               upper = sum.meta$within.fixed$upper[i], 
                               summary = TRUE)
+      
       # random effect for the group
       group.random <-forestDF(meta, study = "Random Effect",
                               n.e = NA, mean.e = NA, sd.e = NA,
