@@ -8,8 +8,13 @@ makeColDesc <- function(format, colnames){
 
 makeCol <- function(coldesc, df, isSummary = FALSE) {
   args <- lapply(coldesc$colnames, get, df)
-  # if both columns have NA's that makes up the cell, set the cell as blank
-  if (isSummary && any(apply(sapply(args, is.na), 1, all))){
+  ## if both columns have NA and it is a summary information 
+  ## set the cell as blank
+  # step performed for df with only one row
+  check.NA <- any(ifelse(is.null(nrow(sapply(args, is.na))),
+                         all(sapply(args, is.na)),
+                         apply(sapply(args, is.na), 1, all)))
+  if (isSummary && check.NA) {
     return("")
   }
   else {
@@ -32,3 +37,20 @@ makeMSDDesc <- function(col1 = "mean", col2 = "sd", round = c(1, 2),
                              "%.", round[2], "f",  brackets[2], sep = ""),
               colnames = c(col1, col2))
 }
+
+## functions for heterogeneity information
+# function for generating customized format for parts
+makeStatsDesc <- function(format, statsNames) {
+  x <- list(format = format, statsNames = statsNames)
+  class(x) <- "statsDesc"
+  x  
+}
+
+makeStats <- function(statsDesc, hetero) {
+  x <- as.list(hetero)
+  args <- lapply(statsDesc$statsNames, get, x)
+  args <- c(list(fmt = statsDesc$format), args)
+  do.call("sprintf", args)
+}
+
+
