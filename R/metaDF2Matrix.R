@@ -3,7 +3,8 @@ metaDF2Matrix <- function(object, ...) UseMethod("metaDF2Matrix")
 
 ##===================metacont=========================##
 metaDF2Matrix.metacontDF <- function(df, order, roundCols = NULL, 
-                                     colNames, groupLab, hgap, newCols = NULL, ...) {
+                                     colNames, groupLab, hgap, newCols = NULL, stats,
+                                     newStats = NULL...) {
   
   if (!inherits(df, "groupedMetaDF")){
     
@@ -60,8 +61,24 @@ metaDF2Matrix.metacontDF <- function(df, order, roundCols = NULL,
     ## step 6: convert the adjusted summary into matrix
     matrix.sum <- as.matrix(round.sum)
     
+    ## step 7: set up gap between heterogeneity information and summary
+    if (missing(hgap)) {
+      matrix.sum <- rbind(matrix.sum, gap = rep("", ncol(matrix.sum)))
+    }
+    
+    
+    ### hetero information
+    ## step 1: form the parts of the required heterogeneity information
+    stats.label <- addStatsLabel(hetero = df$hetero, stats = stats, newStats = newStats)
+    
+    ## step 2: combine the parts and form the heterogeneity information
+    hetero.info <- addHetero(statsLabel = stats.label)
+    
+    ## step 3: form the row for the heterogeneity information
+    matrix.hetero <- c(hetero.info, rep("", ncol(matrix.DF) - 1))
+    
     ### set up the main matrix
-    matrix.total <- rbind(matrix.DF, matrix.sum)
+    matrix.total <- rbind(matrix.DF, matrix.sum, matrix.hetero)
     
     ### plotDF
     ## step 1: generate the plotting parameters for the main DF
@@ -79,24 +96,21 @@ metaDF2Matrix.metacontDF <- function(df, order, roundCols = NULL,
                            lower = round.sum["lower"],
                            upper = round.sum["upper"])
     
-    ## step 4: combine two sets of plotting parameters
-    PlotDF <- rbind(plot.DF, plot.sum)
+    ## step 4: gap
+    if (missing(hgap)) {
+      plot.sum[nrow(plot.sum) + 1, ] <- rep(NA, ncol(plot.DF))
+    }
     
-    ## step 5: set up is.summary for formatting
+    ## step 5: hetero
+    plot.hetero <- rep(NA, ncol(plot.DF))
+    
+    ## step 5: combine two sets of plotting parameters
+    PlotDF <- rbind(plot.DF, plot.sum, plot.hetero)
+    
+    ## step 6: set up is.summary for formatting
     is.summary <- c(rep(FALSE, nrow(round.DF) + ifelse(missing(hgap), 1, 0)), 
-                    rep(TRUE, nrow(round.sum)))
+                    rep(TRUE, nrow(round.sum)), rep(FALSE, ifelse(missing(hgap), 1, 0) + 1))
     
-    ### hetero information
-  
-    
-    
-   
-    
-    
-                          
-                          
-                      
-    
-    
+      
   }  
 }
