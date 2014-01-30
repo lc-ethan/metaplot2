@@ -1,116 +1,118 @@
-#### set up the generic function
+##=========================metaDF2Matrix=========================##
 metaDF2Matrix <- function(object, ...) UseMethod("metaDF2Matrix")
 
-##===================metacont=========================##
-metaDF2Matrix.metacontDF <- function(df, order, roundCols = NULL, 
-                                     colNames, groupLab, hgap, newCols = NULL, stats,
-                                     newStats = NULL...) {
-  
+##==========================metacont=============================##
+metaDF2Matrix.metacontDF <- function(df, order, newCols = NULL, roundCols = NULL,
+                                     stats = list(hetero = makeStatsDesc(labelNames = c("Q", "p", "df"))), 
+                                     newLabel = NULL, colNames, groupLab, hgap, vgap, ...) {
   if (!inherits(df, "groupedMetaDF")){
     
-    ### check order argument
-    checkOrder(df = df, order = order, newCols = newCols)
-    
-    ### main DF
-    ## step 1: extract the main data frame
+    ## main DF
     DF <- df$DF
     
-    ## step 2: add CI or MSD into main DF if required
-    DF <- addCIMSD(df = DF, order = order, newCols = newCols,
-                   isSummary = FALSE)
+    main.DF <- mainGen(df = DF, order = order, newCols = newCols, 
+                       roundCols = roundCols, isSummary = FALSE)
     
-    ## step 3: add columns with specific format into main DF
-    DF <- addCols(df = DF, newCols = newCols, isSummary = FALSE)
-
-    ## step 4: rounding columns in main DF
-    rounding.DF <- roundingCols(df = DF, newCols = newCols,
-                                roundCols = roundCols, isSummary = FALSE)
+    matrix.DF <- as.matrix(main.DF)
     
-    round.DF <- rounding.DF[[1]]
-    round.cols <- rounding.DF[[2]]
-    
-    ## step 5: convert the adjusted DF to matrix
-    matrix.DF <- as.matrix(round.DF)
-    
-    ## step 6: set up gap between main DF and summary
+    ## set up gap between main DF and summary by default
     if (missing(hgap)) {
-      matrix.DF <- rbind(matrix.DF, gap = rep("", ncol(matrix.DF)))
+      matrix.DF <- rbind(matrix.DF, gap = "")
     }
-  
-    ### summary
-    ## step 1: extract the fixed and the random summary
+    
+    ## summary
+    # extract the fixed and the random summary
     summary <- list(fixed = df$summary.fixed, random = df$summary.random)
     
-    ## step 2: add CI or MSD into summary if required
-    summary <- lapply(summary, addCIMSD, order = order, newCols = newCols,
-                      isSummary = TRUE)
-    
-    ## step 3: add columns with specific format into summary
-    summary <- lapply(summary, addCols, newCols = newCols, isSummary = TRUE)
-    
-    ## step 4: rounding columns in summary
-    summary <- lapply(summary, roundingCols, newCols = newCols,
+    summary <- lapply(summary, mainGen, order = order, newCols = newCols,
                       roundCols = roundCols, isSummary = TRUE)
     
-    round.fixed <- summary$fixed$df
-    round.random <- summary$random$df
-    
-    ## step 5: combine the summary effects
-    round.sum <- rbind(round.fixed, round.random)
-    
-    ## step 6: convert the adjusted summary into matrix
+    round.sum <- rbind(summary$fixed, summary$random)
     matrix.sum <- as.matrix(round.sum)
     
-    ## step 7: set up gap between heterogeneity information and summary
+    ## set up gap between heterogeneity information and summary by default
     if (missing(hgap)) {
-      matrix.sum <- rbind(matrix.sum, gap = rep("", ncol(matrix.sum)))
+      matrix.sum <- rbind(matrix.sum, gap = "")
     }
     
+    ## hetero information
+    hetero <- df$hetero
     
-    ### hetero information
-    ## step 1: form the parts of the required heterogeneity information
-    stats.label <- addStatsLabel(hetero = df$hetero, stats = stats, newStats = newStats)
+    matrix.hetero <- heteroGen(hetero = hetero, df = matrix.DF, 
+                               stats = stats, newLabel = newLabel)
     
-    ## step 2: combine the parts and form the heterogeneity information
-    hetero.info <- addHetero(statsLabel = stats.label)
+    ## set up the main matrix
+    matrix.full <- rbind(matrix.DF, matrix.sum, hetero = matrix.hetero)
     
-    ## step 3: form the row for the heterogeneity information
-    matrix.hetero <- c(hetero.info, rep("", ncol(matrix.DF) - 1))
+    ## plotDF
+    plot.list <- plotDF(df = df, hetero = matrix.hetero, hgap = hgap )
+    plot.DF <- plot.list$plot.DF
+    is.summary <- plot.list$is.summary
     
-    ### set up the main matrix
-    matrix.total <- rbind(matrix.DF, matrix.sum, matrix.hetero)
-    
-    ### plotDF
-    ## step 1: generate the plotting parameters for the main DF
-    plot.DF <- data.frame(mean = round.DF["mean"],
-                          lower = round.DF["lower"],
-                          upper = round.DF["upper"])
-    
-    ## step 2: gap
-    if (missing(hgap)) {
-      plot.DF[nrow(plot.DF) + 1, ] <- rep(NA, ncol(plot.DF))
+    ## set up column names
+    # matrix
+    if (missing(colNames)) {
+      matrix.full <- rbind(colnames = colnames(matrix.full), matrix.full)
+    }
+    else {
+      if (length(colNames) != ncol(matrix.full))
+        stop("the number of column names does not match the number of columns")
+      matrix.full <- rbind(colnames = colNames, matrix.full)
     }
     
-    ## step 3: generate the plotting parameters for the summary
-    plot.sum <- data.frame(mean = round.sum["mean"],
-                           lower = round.sum["lower"],
-                           upper = round.sum["upper"])
+    # plot.DF
+    plot.DF <- rbind(NA, plot.DF)
+    is.summary <- c(TRUE, is.summary)
     
-    ## step 4: gap
-    if (missing(hgap)) {
-      plot.sum[nrow(plot.sum) + 1, ] <- rep(NA, ncol(plot.DF))
+    ## set up title and subtitle
+    if (!is.null(df$subtitle)) {
+      subtitle <- c(df$subtitle, rep(NA, ncol(matrix.full) - 1))
+      if (missing(hgap)) {
+        matrix.full <- rbind(subtitle = subtitle, gap = "",  matrix.full)
+        plot.DF <- rbind(NA, NA, plot.DF)
+        is.summary <- c(TRUE, FALSE, is.summary)
+      }
+      else {
+        matrix.full <- rbind(subtitle = subtitle, matrix.full)
+        plot.DF <- rbind(NA, plot.DF)
+        is.summary <- c(TRUE, is.summary)  
+      }    
     }
     
-    ## step 5: hetero
-    plot.hetero <- rep(NA, ncol(plot.DF))
+    if (!is.null(df$title)) {
+      title <- c(df$title, rep(NA, ncol(matrix.full) - 1))
+      if (missing(hgap) && is.null(df$subtitle)) {
+        matrix.full <- rbind(title = title, gap = "",  matrix.full)
+        plot.DF <- rbind(NA, NA, plot.DF)
+        is.summary <- c(TRUE, FALSE, is.summary)  
+      }
+      else {
+        matrix.full <- rbind(title = title,  matrix.full)
+        plot.DF <- rbind(NA, plot.DF)
+        is.summary <- c(TRUE, is.summary)  
+      }
+    }
     
-    ## step 5: combine two sets of plotting parameters
-    PlotDF <- rbind(plot.DF, plot.sum, plot.hetero)
+    ## insert gaps by users specification
+    if (!missing(hgap)) {
+      for (i in 1:length(hgap)) {
+        matrix.full <- rbind(matrix.full[1:(hgap[i] - 1), , drop = FALSE], gap = "", 
+                             matrix.full[hgap[i]:nrow(matrix.full), , drop = FALSE])
+        plot.DF <- rbind(plot.DF[1:(hgap[i] - 1), , drop = FALSE], NA,
+                         plot.DF[hgap[i]:nrow(plot.DF), , drop = FALSE])
+        is.summary <- c(is.summary[1:(hgap[i] - 1)], FALSE, 
+                        is.summary[hgap[i]:length(is.summary)])
+      }
+    }
+    if (!missing(vgap)) {
+      for (i in 1:length(vgap)) {
+        matrix.full <- cbind(matrix.full[, 1:(vgap[i] - 1), drop = FALSE], gap = "",
+                             matrix.full[, vgap[i]:ncol(matrix.full), drop = FALSE])
+      }
+    }
     
-    ## step 6: set up is.summary for formatting
-    is.summary <- c(rep(FALSE, nrow(round.DF) + ifelse(missing(hgap), 1, 0)), 
-                    rep(TRUE, nrow(round.sum)), rep(FALSE, ifelse(missing(hgap), 1, 0) + 1))
-    
-      
-  }  
+    ## combine plotting information
+    plot.DF <- cbind(plot.DF, is.summary)
+  }
+  list(matrix = matrix.full, plotDF = plot.DF)
 }
