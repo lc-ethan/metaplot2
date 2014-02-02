@@ -1,39 +1,62 @@
 ##=============plotDF generating function================##
-plotDF <- function(df, hetero, hgap) {
-  # step 1: generate the plotting parameters for the main DF
-  mainDF <- df$DF
-  plot.main <- data.frame(mean = mainDF["mean"],
-                          lower = mainDF["lower"],
-                          upper = mainDF["upper"])
-  
-  # step 2: gap by default
-  if (missing(hgap)) {
-    plot.main[nrow(plot.main) + 1, ] <- rep(NA, ncol(plot.main)) 
+plotDF <- function(df, hetero, hgap, overallSum) {
+  if (!overallSum) {
+    # step 1: generate the plotting parameters for the main DF (normal DF)
+    mainDF <- df$DF
+    plot.main <- data.frame(mean = mainDF["mean"],
+                            lower = mainDF["lower"],
+                            upper = mainDF["upper"])
+    
+    # step 2: gap by default (normal DF)
+    if (missing(hgap)) {
+      plot.main[nrow(plot.main) + 1, ] <- rep(NA, ncol(plot.main)) 
+    }
+    
+    # step 3: generating the plotting parameters for the summary (normal DF)
+    summary <- rbind(df$summary.fixed, df$summary.random)
+    
+  }
+  else {
+    # step 1: generate the plotting parameters for the summary (overall summary)
+    summary <- rbind(fixed = df$overall.fixed, random = df$overall.random)
   }
   
-  # step 3: generating the plotting parameters for the summary
-  summary <- rbind(df$summary.fixed, df$summary.random)
   plot.sum <- data.frame(mean = summary["mean"],
                          lower = summary["lower"],
                          upper = summary["upper"])
   
-  # step 4: gap by default
+  # step 4: gap by default (normal DF)
+  # step 2: gap by default (overall summary)
   if (missing(hgap)) {
     plot.sum[nrow(plot.sum) + 1, ] <- rep(NA, ncol(plot.sum)) 
   }
   
-  # step 5: generating the plotting parameters for the hetero
+  # step 5: generating the plotting parameters for the hetero (normal DF)
+  # step 3: generating the plotting parameters for the hetero (overall summary)
   plot.hetero <- data.frame(mean = rep(NA, nrow(hetero)),
                             lower = rep(NA, nrow(hetero)),
                             upper = rep(NA, nrow(hetero)))
   
-  # step 6: combination
-  plot.DF <- rbind(plot.main, plot.sum, plot.hetero)
-  
-  # step 7: set up is.summary for formatting
-  is.summary <- c(rep(FALSE, nrow(plot.main)), 
-                  rep(TRUE, nrow(summary)), 
-                  rep(FALSE, ifelse(missing(hgap), 1, 0) + nrow(plot.hetero)))
+  if (!overallSum) {
+    # step 6: combination (normal DF)
+    plot.DF <- rbind(plot.main, plot.sum, plot.hetero)  
+  }
+  else {
+    # step 4: combination (overall summary)
+    plot.DF <- rbind(plot.sum, plot.hetero)
+  }
+
+  if (!overallSum) {
+    # step 7: set up is.summary for formatting (normal DF)
+    is.summary <- c(rep(FALSE, nrow(plot.main)), 
+                    rep(TRUE, nrow(summary)), 
+                    rep(FALSE, ifelse(missing(hgap), 1, 0) + nrow(plot.hetero)))
+  }
+  else {
+    # step 5: set up is.summary for formatting (overall summary)
+    is.summary <- c(rep(TRUE, nrow(summary)), 
+                    rep(FALSE, ifelse(missing(hgap), 1, 0) + nrow(plot.hetero)))
+  }
   
   list(plot.DF = plot.DF, is.summary = is.summary)
 } 

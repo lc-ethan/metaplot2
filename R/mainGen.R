@@ -1,15 +1,26 @@
 ##=============main DF matrix generating function====================##
 mainGen <- function(df, order, newCols, roundCols, isSummary) {
-  # step 1: add columns with specific format into main DF
+  # step 1: check arguments
+  if (!all(order %in% c(names(df), names(newCols), "ci", "msd.e", "msd.c"))) {
+    stop("unexpected column names input in the argument 'order'")
+  }
+  
+  if (!is.null(newCols)){
+    if (!all(sapply(newCols, inherits, what = "colDesc"))) {
+      stop("unexpected class listed under 'newCols'")
+    }   
+  }
+  
+  # step 2: add columns with specific format into main DF
   if (any(order %in% c("ci", "msd.e", "msd.c", names(newCols)))) {
     df <- addCols(df = df, order = order, newCols = newCols, 
                   isSummary = isSummary)
   }
  
-  # step 2: extract the required columns to form a new data frame
+  # step 3: extract the required columns to form a new data frame
   df <- df[order]
   
-  # step 3: round up the main DF
+  # step 4: round up the main DF
   df <- roundUpCols(df = df, newCols = newCols, roundCols = roundCols,
                     isSummary = isSummary)
   
@@ -26,9 +37,6 @@ makeColDesc <- function(format, colNames){
 
 ## generate column with specified format
 makeCol <- function(colDesc, df, isSummary) {
-  if (!inherits(colDesc, "colDesc")) {
-    stop("unexpected format listed in the argument 'newCols'")
-  }
   col.names <- names(df)
   if (!all(colDesc$colNames %in% col.names)) {
     stop("unexpected column names in makeColDesc()")

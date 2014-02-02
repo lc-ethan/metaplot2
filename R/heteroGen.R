@@ -2,14 +2,21 @@
 
 ## heteroGen() used in metaDF2Matrix() to generate hetero info
 heteroGen <- function(hetero, df, stats, newLabel) {  
-  # step 1: creat hetero labels for the stats information
+  # step 1: check argument
+  if (!is.null(newLabel)){
+    if (!all(sapply(newLabel, inherits, what = "labelDesc"))) {
+      stop("unexpected class listed under 'newLabel'")
+    }   
+  }
+  
+  # step 2: creat hetero labels for the stats information
   hetero.label <- addLabel(hetero = hetero, newLabel = newLabel) 
   
-  # step 2: create the stats information as the list
+  # step 3: create the stats information as the list
   hetero.stats <- lapply(stats, FUN = addStats, 
                          label = hetero.label, hetero = hetero)
   
-  # step 3: transform it into a matrix
+  # step 4: transform it into a matrix
   t(sapply(hetero.stats, function(stats, df) c(stats, rep("", ncol(df) - 1)), 
            df = df))
 }
@@ -36,13 +43,7 @@ makeLabel <- function(labelDesc, hetero) {
 }
 
 ## generate a set of labels to be used in heteroGen()
-addLabel <- function(hetero, newLabel) {
-  if (!is.null(newLabel)){
-    if (!all(sapply(newLabel, inherits, what = "labelDesc"))) {
-      stop("unexpected class listed under 'newLabel'")
-    }   
-  }
- 
+addLabel <- function(hetero, newLabel) { 
   default.format <- list()
   default.format$Q <- list(format = paste("Chi-square =", "% .", 2, "f", sep = ""), 
                            heteroNames = "Q")
