@@ -1,7 +1,7 @@
 ##=============heterogeneity information generating function====================##
 
 ## heteroGen() used in metaDF2Matrix() to generate hetero info
-heteroGen <- function(hetero, df, stats, newLabel) {  
+heteroGen <- function(hetero, df, stats, newLabel, metaClass, overallSum) {  
   # step 1: check argument
   if (!is.null(newLabel)){
     if (!all(sapply(newLabel, inherits, what = "labelDesc"))) {
@@ -10,7 +10,8 @@ heteroGen <- function(hetero, df, stats, newLabel) {
   }
   
   # step 2: creat hetero labels for the stats information
-  hetero.label <- addLabel(hetero = hetero, newLabel = newLabel) 
+  hetero.label <- addLabel(hetero = hetero, newLabel = newLabel, metaClass = metaClass, 
+                           overallSum = overallSum) 
   
   # step 3: create the stats information as the list
   hetero.stats <- lapply(stats, FUN = addStats, 
@@ -43,7 +44,7 @@ makeLabel <- function(labelDesc, hetero) {
 }
 
 ## generate a set of labels to be used in heteroGen()
-addLabel <- function(hetero, newLabel) { 
+addLabel <- function(hetero, newLabel, metaClass, overallSum) { 
   default.format <- list()
   default.format$Q <- list(format = paste("Chi-square =", "% .", 2, "f", sep = ""), 
                            heteroNames = "Q")
@@ -69,6 +70,23 @@ addLabel <- function(hetero, newLabel) {
   default.format$I2.ci <- list(format = paste("[", "%.", 2,  "f", "%%",  ",", "% .", 2,
                                               "f", "%%", "]", sep = ""), 
                                heteroNames = c("I2.lower.per", "I2.upper.per"))
+  
+  
+  if (any(metaClass == "metabinDF")) {
+    if (any(metaClass == "groupedMetaDF")) {
+      if (overallSum) {
+        default.format$Q.CMH <- list(format = paste("Test for overall effect: ", "Q = ",
+                                                    "%.", 2, "f", sep = ""),
+                                     heteroNames = "Q.CMH")
+      }  
+    }
+    else {
+      default.format$Q.CMH <- list(format = paste("Test for overall effect: ", "Q = ",
+                                                  "%.", 2, "f", sep = ""),
+                                   heteroNames = "Q.CMH")
+    }
+  }
+  
   
   if (is.null(newLabel)) {
     label.format <- default.format
@@ -105,9 +123,13 @@ addLabel <- function(hetero, newLabel) {
       hetero["I2.lower.per"] <- hetero["I2.lower"] * 100 
       hetero["I2.upper.per"] <- hetero["I2.upper"] * 100
     }
+    if (any(metaClass = "metabinDF")) {
+      if (!any(names(newLabel) %in% "Q.CMH")) {
+        label.format$Q.CMH <- default.format$Q.CMH
+      }  
+    }
   }
   label.desc <- lapply(label.format, do.call, what = "makeLabelDesc")
-     
   label.desc <- c(label.desc, newLabel)
   lapply(label.desc, makeLabel, hetero = hetero)
 }
@@ -115,27 +137,37 @@ addLabel <- function(hetero, newLabel) {
 ##==================================makeStats====================================##
 
 ## set up describtion format for hetero information
-makeStatsDesc <- function(labelNames, heading, newStatsFormat) {
-  if (missing(heading) && missing(newStatsFormat)) {
-    format <- paste("Heterogeneity:", paste(rep("%s", length(labelNames)),
-                                            collapse = " "))
-    x <- list(format = format, statsNames = labelNames)
-    class(x) <- "statsDesc"
+makeStatsDesc <- function(labelNames, heading, newStatsFormat, 
+                          emptyHeading = FALSE) {
+  if (!emptyHeading) {
+    if (missing(heading) && missing(newStatsFormat)) {
+      format <- paste("Heterogeneity:", paste(rep("%s", length(labelNames)),
+                                              collapse = " "))
+      x <- list(format = format, statsNames = labelNames)
+      class(x) <- "statsDesc"
+    }
+    
+    if (!missing(heading) && missing(newStatsFormat)) {
+      format <- paste(heading, paste(rep("%s", length(labelNames)), 
+                                     collapse = " "))
+      x <- list(format = format, statsNames = labelNames)
+      class(x) <- "statsDesc"
+    }
+    
+    if (!missing(newStatsFormat)) {
+      format <- newStatsFormat
+      x <- list(format = format, statsNames = labelNames)
+      class(x) <- "statsDesc"
+    }  
+    x   
   }
-  
-  if (!missing(heading) && missing(newStatsFormat)) {
-    format <- paste(heading, paste(rep("%s", length(labelNames)), 
-                                 collapse = " "))
+  else {
+    format <- paste(paste(rep(" ", 14), collapse = ""), 
+                    paste(rep("%s", length(labelNames)), collapse = " "))
     x <- list(format = format, statsNames = labelNames)
-    class(x) <- "statsDesc"
+    class(x) <- "statsDesc" 
+    x
   }
-  
-  if (!missing(newStatsFormat)) {
-    format <- newStatsFormat
-    x <- list(format = format, statsNames = labelNames)
-    class(x) <- "statsDesc"
-  }  
-  x
 }
 
 ## generate hetero info with specified format

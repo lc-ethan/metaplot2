@@ -1,18 +1,14 @@
 matrixify <- function(df, order, newCols, roundCols, stats, 
-                      newLabel, hgap, overallSum, ...) {
+                      newLabel, hgap, overallSum, metaClass, ...) {
   ## matrixify for normal DF
   if (!overallSum) {
-    ## default setting for order
-    if (missing(order)) {
-      order <- c("study", "effect")
-    }
-    
     ## main DF
     DF <- df$DF
     
     # generate main DF
     main.DF <- mainGen(df = DF, order = order, newCols = newCols, 
-                       roundCols = roundCols, isSummary = FALSE)
+                       roundCols = roundCols, isSummary = FALSE,
+                       metaClass = metaClass)
     
     # transform main DF into matrix
     matrix.DF <- as.matrix(main.DF)
@@ -35,9 +31,10 @@ matrixify <- function(df, order, newCols, roundCols, stats,
   }
  
   summary <- lapply(summary, mainGen, order = order, newCols = newCols,
-                    roundCols = roundCols, isSummary = TRUE)
+                    roundCols = roundCols, isSummary = TRUE, metaClass = metaClass)
   
   round.sum <- rbind(summary$fixed, summary$random)
+  rownames(round.sum) <- c("fixed", "random")
   matrix.sum <- as.matrix(round.sum)
   
   ## set up gap between heterogeneity information and summary by default
@@ -49,7 +46,8 @@ matrixify <- function(df, order, newCols, roundCols, stats,
   hetero <- df$hetero
   
   matrix.hetero <- heteroGen(hetero = hetero, df = matrix.sum, 
-                             stats = stats, newLabel = newLabel)
+                             stats = stats, newLabel = newLabel,
+                             metaClass = metaClass, overallSum = overallSum)
   
   ## set up the main matrix
   if (!overallSum) {
