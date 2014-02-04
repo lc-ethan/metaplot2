@@ -123,7 +123,7 @@ addLabel <- function(hetero, newLabel, metaClass, overallSum) {
       hetero["I2.lower.per"] <- hetero["I2.lower"] * 100 
       hetero["I2.upper.per"] <- hetero["I2.upper"] * 100
     }
-    if (any(metaClass = "metabinDF")) {
+    if (any(metaClass == "metabinDF")) {
       if (!any(names(newLabel) %in% "Q.CMH")) {
         label.format$Q.CMH <- default.format$Q.CMH
       }  
@@ -162,7 +162,7 @@ makeStatsDesc <- function(labelNames, heading, newStatsFormat,
     x   
   }
   else {
-    format <- paste(paste(rep(" ", 14), collapse = ""), 
+    format <- paste(paste(rep(" ", 23), collapse = ""), 
                     paste(rep("%s", length(labelNames)), collapse = " "))
     x <- list(format = format, statsNames = labelNames)
     class(x) <- "statsDesc" 
