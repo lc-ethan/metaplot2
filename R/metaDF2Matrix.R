@@ -5,7 +5,7 @@ metaDF2Matrix <- function(object, ...) UseMethod("metaDF2Matrix")
 metaDF2Matrix.metacontDF <- function(df, order, newCols = NULL, roundCols = NULL,
                                      stats = list(hetero = makeStatsDesc(labelNames = c("Q", "p", "df"))), 
                                      groupStats = NULL, newLabel = NULL, colNames, 
-                                     groupLab, hgap, vgap, drop, ...) {
+                                     groupLab, hgap = NULL, vgap, drop, ...) {
   if (!inherits(df, "groupedMetaDF")){
     ## default setting for order
     if (missing(order)) {
@@ -40,7 +40,7 @@ metaDF2Matrix.metacontDF <- function(df, order, newCols = NULL, roundCols = NULL
     ## set up title and subtitle
     if (!is.null(df$subtitle)) {
       subtitle <- c(df$subtitle, rep(NA, ncol(plot.matrix) - 1))
-      if (missing(hgap)) {
+      if (is.null(hgap)) {
         plot.matrix <- rbind(subtitle = subtitle, gap = "",  plot.matrix)
         plot.DF <- rbind(NA, NA, plot.DF)
         is.summary <- c(TRUE, FALSE, is.summary)
@@ -54,7 +54,7 @@ metaDF2Matrix.metacontDF <- function(df, order, newCols = NULL, roundCols = NULL
     
     if (!is.null(df$title)) {
       title <- c(df$title, rep(NA, ncol(plot.matrix) - 1))
-      if (missing(hgap) && is.null(df$subtitle)) {
+      if (is.null(hgap) && is.null(df$subtitle)) {
         plot.matrix <- rbind(title = title, gap = "",  plot.matrix)
         plot.DF <- rbind(NA, NA, plot.DF)
         is.summary <- c(TRUE, FALSE, is.summary)  
@@ -67,7 +67,7 @@ metaDF2Matrix.metacontDF <- function(df, order, newCols = NULL, roundCols = NULL
     }   
     
     ## insert gaps by users specification
-    if (!missing(hgap)) {
+    if (!is.null(hgap)) {
       for (i in 1:length(hgap)) {
         plot.matrix <- rbind(plot.matrix[1:(hgap[i] - 1), , drop = FALSE], gap = "", 
                              plot.matrix[hgap[i]:nrow(plot.matrix), , drop = FALSE])
@@ -159,7 +159,7 @@ metaDF2Matrix.metacontDF <- function(df, order, newCols = NULL, roundCols = NULL
     ## set up title and subtitle
     if (!is.null(df$subtitle)) {
       subtitle <- c(df$subtitle, rep(NA, ncol(plot.matrix) - 1))
-      if (missing(hgap)) {
+      if (is.null(hgap)) {
         plot.matrix <- rbind(subtitle = subtitle, gap = "",  plot.matrix)
         plot.DF <- rbind(NA, NA, plot.DF)
         is.summary <- c(TRUE, FALSE, is.summary)
@@ -173,7 +173,7 @@ metaDF2Matrix.metacontDF <- function(df, order, newCols = NULL, roundCols = NULL
     
     if (!is.null(df$title)) {
       title <- c(df$title, rep(NA, ncol(plot.matrix) - 1))
-      if (missing(hgap) && is.null(df$subtitle)) {
+      if (is.null(hgap) && is.null(df$subtitle)) {
         plot.matrix <- rbind(title = title, gap = "",  plot.matrix)
         plot.DF <- rbind(NA, NA, plot.DF)
         is.summary <- c(TRUE, FALSE, is.summary)  
@@ -186,7 +186,7 @@ metaDF2Matrix.metacontDF <- function(df, order, newCols = NULL, roundCols = NULL
     }   
     
     ## insert gaps by users specification
-    if (!missing(hgap)) {
+    if (!is.null(hgap)) {
       for (i in 1:length(hgap)) {
         plot.matrix <- rbind(plot.matrix[1:(hgap[i] - 1), , drop = FALSE], gap = "", 
                              plot.matrix[hgap[i]:nrow(plot.matrix), , drop = FALSE])
@@ -219,7 +219,7 @@ metaDF2Matrix.metacontDF <- function(df, order, newCols = NULL, roundCols = NULL
 metaDF2Matrix.metabinDF <- function(df, order, newCols = NULL, roundCols = NULL,
                                     stats = list(hetero = makeStatsDesc(labelNames = c("I2", "tau2", "p"))), 
                                     groupStats = NULL, newLabel = NULL, 
-                                    colNames, groupLab, hgap, vgap, drop, ...) {
+                                    colNames, groupLab, hgap = NULL, vgap, drop, ...) {
   if (!inherits(df, "groupedMetaDF")){
     ## default setting for order
     if (missing(order)) {
@@ -252,7 +252,7 @@ metaDF2Matrix.metabinDF <- function(df, order, newCols = NULL, roundCols = NULL,
     ## set up title and subtitle
     if (!is.null(df$subtitle)) {
       subtitle <- c(df$subtitle, rep(NA, ncol(plot.matrix) - 1))
-      if (missing(hgap)) {
+      if (is.null(hgap)) {
         plot.matrix <- rbind(subtitle = subtitle, gap = "",  plot.matrix)
         plot.DF <- rbind(NA, NA, plot.DF)
         is.summary <- c(TRUE, FALSE, is.summary)
@@ -266,7 +266,7 @@ metaDF2Matrix.metabinDF <- function(df, order, newCols = NULL, roundCols = NULL,
     
     if (!is.null(df$title)) {
       title <- c(df$title, rep(NA, ncol(plot.matrix) - 1))
-      if (missing(hgap) && is.null(df$subtitle)) {
+      if (is.null(hgap) && is.null(df$subtitle)) {
         plot.matrix <- rbind(title = title, gap = "",  plot.matrix)
         plot.DF <- rbind(NA, NA, plot.DF)
         is.summary <- c(TRUE, FALSE, is.summary)  
@@ -279,7 +279,7 @@ metaDF2Matrix.metabinDF <- function(df, order, newCols = NULL, roundCols = NULL,
     }   
     
     ## insert gaps by users specification
-    if (!missing(hgap)) {
+    if (!is.null(hgap)) {
       for (i in 1:length(hgap)) {
         plot.matrix <- rbind(plot.matrix[1:(hgap[i] - 1), , drop = FALSE], gap = "", 
                              plot.matrix[hgap[i]:nrow(plot.matrix), , drop = FALSE])
@@ -370,7 +370,7 @@ metaDF2Matrix.metabinDF <- function(df, order, newCols = NULL, roundCols = NULL,
     ## set up title and subtitle
     if (!is.null(df$subtitle)) {
       subtitle <- c(df$subtitle, rep(NA, ncol(plot.matrix) - 1))
-      if (missing(hgap)) {
+      if (is.null(hgap)) {
         plot.matrix <- rbind(subtitle = subtitle, gap = "",  plot.matrix)
         plot.DF <- rbind(NA, NA, plot.DF)
         is.summary <- c(TRUE, FALSE, is.summary)
@@ -384,7 +384,7 @@ metaDF2Matrix.metabinDF <- function(df, order, newCols = NULL, roundCols = NULL,
     
     if (!is.null(df$title)) {
       title <- c(df$title, rep(NA, ncol(plot.matrix) - 1))
-      if (missing(hgap) && is.null(df$subtitle)) {
+      if (is.null(hgap) && is.null(df$subtitle)) {
         plot.matrix <- rbind(title = title, gap = "",  plot.matrix)
         plot.DF <- rbind(NA, NA, plot.DF)
         is.summary <- c(TRUE, FALSE, is.summary)  
@@ -397,7 +397,7 @@ metaDF2Matrix.metabinDF <- function(df, order, newCols = NULL, roundCols = NULL,
     }   
     
     ## insert gaps by users specification
-    if (!missing(hgap)) {
+    if (!is.null(hgap)) {
       for (i in 1:length(hgap)) {
         plot.matrix <- rbind(plot.matrix[1:(hgap[i] - 1), , drop = FALSE], gap = "", 
                              plot.matrix[hgap[i]:nrow(plot.matrix), , drop = FALSE])
