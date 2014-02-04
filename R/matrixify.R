@@ -14,10 +14,12 @@ matrixify <- function(df, order, newCols, roundCols, stats,
     matrix.DF <- as.matrix(main.DF)
     
     ## set up gap between main DF and summary by default
-    if (missing(hgap)) {
-      matrix.DF <- rbind(matrix.DF, gap = "")
-    } 
-    
+    if (!any(metaClass %in% "groupedMetaDF")) {
+      if (is.null(hgap)) {
+        matrix.DF <- rbind(matrix.DF, gap = "")
+      }  
+    }
+ 
     ## summary
     # extract the fixed and the random summary
     summary <- list(fixed = df$summary.fixed, random = df$summary.random)
@@ -36,29 +38,39 @@ matrixify <- function(df, order, newCols, roundCols, stats,
   round.sum <- rbind(summary$fixed, summary$random)
   rownames(round.sum) <- c("fixed", "random")
   matrix.sum <- as.matrix(round.sum)
-  
-  ## set up gap between heterogeneity information and summary by default
-  if (missing(hgap)) {
-    matrix.sum <- rbind(matrix.sum, gap = "")
-  }
-  
+    
   ## hetero information
-  hetero <- df$hetero
-  
-  matrix.hetero <- heteroGen(hetero = hetero, df = matrix.sum, 
-                             stats = stats, newLabel = newLabel,
-                             metaClass = metaClass, overallSum = overallSum)
+  if (is.null(stats)) {
+    matrix.hetero <- NULL
+  }
+  else {
+    hetero <- df$hetero
+    
+    matrix.hetero <- heteroGen(hetero = hetero, df = matrix.sum, 
+                               stats = stats, newLabel = newLabel,
+                               metaClass = metaClass, overallSum = overallSum)
+    
+    rownames(matrix.hetero) <- rep("hetero", nrow(matrix.hetero))  
+  }
+
   
   ## set up the main matrix
   if (!overallSum) {
-    matrix.full <- rbind(matrix.DF, matrix.sum, hetero = matrix.hetero)
+    if (any(metaClass %in% "groupedMetaDF")) {
+        matrix.full <- rbind(matrix.DF, matrix.sum, hetero = matrix.hetero, 
+                             gap = ifelse(is.null(hgap), "", NULL))
+    }
+    else {
+      matrix.full <- rbind(matrix.DF, matrix.sum, hetero = matrix.hetero)
+    }
   }
   else {
     matrix.full <- rbind(matrix.sum, hetero = matrix.hetero)
   }
   
   ## plotDF
-  plot.list <- plotDF(df = df, hetero = matrix.hetero, hgap = hgap, overallSum = overallSum)
+  plot.list <- plotDF(df = df, hetero = matrix.hetero, hgap = hgap, overallSum = overallSum,
+                      metaClass = metaClass)
   
   list(matrix = matrix.full, plot.DF = plot.list$plot.DF,
        is.summary = plot.list$is.summary)
