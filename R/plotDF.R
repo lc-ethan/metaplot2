@@ -1,5 +1,5 @@
 ##=============plotDF generating function================##
-plotDF <- function(df, hetero, hgap, overallSum) {
+plotDF <- function(df, hetero, hgap, overallSum, metaClass) {
   if (!overallSum) {
     # step 1: generate the plotting parameters for the main DF (normal DF)
     mainDF <- df$DF
@@ -8,10 +8,12 @@ plotDF <- function(df, hetero, hgap, overallSum) {
                             upper = mainDF["upper"])
     
     # step 2: gap by default (normal DF)
-    if (missing(hgap)) {
-      plot.main[nrow(plot.main) + 1, ] <- rep(NA, ncol(plot.main)) 
+    if (!any(metaClass %in% "groupedMetaDF")) {
+      if (is.null(hgap)) {
+        plot.main[nrow(plot.main) + 1, ] <- rep(NA, ncol(plot.main)) 
+      } 
     }
-    
+
     # step 3: generating the plotting parameters for the summary (normal DF)
     summary <- rbind(df$summary.fixed, df$summary.random)
     
@@ -25,21 +27,27 @@ plotDF <- function(df, hetero, hgap, overallSum) {
                          lower = summary["lower"],
                          upper = summary["upper"])
   
-  # step 4: gap by default (normal DF)
-  # step 2: gap by default (overall summary)
-  if (missing(hgap)) {
-    plot.sum[nrow(plot.sum) + 1, ] <- rep(NA, ncol(plot.sum)) 
-  }
-  
   # step 5: generating the plotting parameters for the hetero (normal DF)
   # step 3: generating the plotting parameters for the hetero (overall summary)
-  plot.hetero <- data.frame(mean = rep(NA, nrow(hetero)),
-                            lower = rep(NA, nrow(hetero)),
-                            upper = rep(NA, nrow(hetero)))
+  if (is.null(hetero)) {
+    plot.hetero <- NULL
+  }
+  else {
+    plot.hetero <- data.frame(mean = rep(NA, nrow(hetero)),
+                              lower = rep(NA, nrow(hetero)),
+                              upper = rep(NA, nrow(hetero)))
+  }
+
   
   if (!overallSum) {
     # step 6: combination (normal DF)
-    plot.DF <- rbind(plot.main, plot.sum, plot.hetero)  
+    if (any(metaClass %in% "groupedMetaDF")) {
+      plot.DF <- rbind(plot.main, plot.sum, plot.hetero,
+                       ifelse(is.null(hgap), NA, NULL)) 
+    }
+    else {
+      plot.DF <- rbind(plot.main, plot.sum, plot.hetero) 
+    }   
   }
   else {
     # step 4: combination (overall summary)
@@ -48,14 +56,22 @@ plotDF <- function(df, hetero, hgap, overallSum) {
 
   if (!overallSum) {
     # step 7: set up is.summary for formatting (normal DF)
-    is.summary <- c(rep(FALSE, nrow(plot.main)), 
-                    rep(TRUE, nrow(summary)), 
-                    rep(FALSE, ifelse(missing(hgap), 1, 0) + nrow(plot.hetero)))
+    if (any(metaClass %in% "groupedMetaDF")) {
+      is.summary <- c(rep(FALSE, nrow(plot.main)), 
+                      rep(TRUE, nrow(summary)), 
+                      rep(FALSE, ifelse(is.null(plot.hetero), 0, nrow(plot.hetero)) +
+                            ifelse(is.null(hgap), 1, 0)))
+    }
+    else {
+      is.summary <- c(rep(FALSE, nrow(plot.main)), 
+                      rep(TRUE, nrow(summary)), 
+                      rep(FALSE, ifelse(is.null(plot.hetero), 0, nrow(plot.hetero))))
+    }
   }
   else {
     # step 5: set up is.summary for formatting (overall summary)
     is.summary <- c(rep(TRUE, nrow(summary)), 
-                    rep(FALSE, ifelse(missing(hgap), 1, 0) + nrow(plot.hetero)))
+                    rep(FALSE, ifelse(is.null(plot.hetero), 0, nrow(plot.hetero))))
   }
   
   list(plot.DF = plot.DF, is.summary = is.summary)
