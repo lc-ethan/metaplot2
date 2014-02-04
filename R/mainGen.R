@@ -104,9 +104,9 @@ addCols <- function(df, order, newCols, isSummary, metaClass) {
   }
   
   if (any(metaClass == "metabinDF")) {
-    default.format <- list(format = paste("[", "%.", 2, "f", ", ", 
-                                          "%.", 2, "f", "]", sep =""),
-                           colNames = c("e.lower", "e.upper"))
+    default.format$ci <- list(format = paste("[", "%.", 2, "f", ", ", 
+                                             "%.", 2, "f", "]", sep =""),
+                              colNames = c("e.lower", "e.upper"))
     if (is.null(newCols)) {
       col.format <- default.format    
     }
