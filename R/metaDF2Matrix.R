@@ -1,5 +1,5 @@
 ##=========================metaDF2Matrix=========================##
-metaDF2Matrix <- function(object, ...) UseMethod("metaDF2Matrix")
+metaDF2Matrix <- function(df, ...) UseMethod("metaDF2Matrix")
 
 ##==========================metacontDF=============================##
 metaDF2Matrix.metacontDF <- function(df, order, newCols = NULL, roundCols = NULL,
