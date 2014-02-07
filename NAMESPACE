@@ -1,1 +1,33 @@
-exportPattern("^[[:alpha:]]+")
+##############S3method################
+S3method(meta2DF, metabin)
+S3method(meta2DF, metacont)
+S3method(metaDF2Matrix, metabinDF)
+S3method(metaDF2Matrix, metacontDF)
+S3method(drawMeta, metabinM)
+S3method(drawMeta, metacontM)
+S3method(print, metabinDF)
+S3method(print, metaPar)
+
+##############Exports##################
+## core functions
+export(meta2DF)
+export(meta2DF.metabin)
+export(meta2DF.metacont)
+export(metaDF2Matrix)
+export(metaDF2Matrix.metabinDF)
+export(metaDF2Matrix.metacontDF)
+export(drawMeta)
+export(drawMeta.metabinM)
+export(drawMeta.metacontM)
+
+## make column descriptions
+export(makeColDesc)
+
+## make stats/label descriptions
+export(makeStatsDesc)
+export(makeLabelDesc)
+
+## specify graphical parameters
+export(metaPar)
+export(metaParDefaults)
+export(resetDefaults)
