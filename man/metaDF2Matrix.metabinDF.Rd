@@ -6,15 +6,15 @@ Convert 'metabinDF' Objects to Matrices
 }
 
 \description{  
-A function that converts 'metabinDF' objects into a character matrix
+A function that converts \code{'metabinDF'} objects into a character matrix
 used for plotting.
 }
 
 \usage{
-metaDF2Matrix.metabinDF(df, order, newCols = NULL, roundCols = NULL,
-                        stats = list(hetero = makeStatsDesc(labelNames = c("I2", "tau2", "p"))), 
-                        groupStats = NULL, newLabel = NULL, 
-                        colNames, groupLab, hgap = NULL, vgap, drop, ...) 
+\method{metaDF2Matrix}{metabinDF}(df, order, newCols = NULL, roundCols = NULL,
+                                  stats = list(hetero = makeStatsDesc(labelNames = c("I2", "tau2", "p"))), 
+                                  groupStats = NULL, newLabel = NULL, 
+                                  colNames, groupLab, hgap = NULL, vgap, drop, ...) 
 }
 
 
@@ -95,7 +95,7 @@ frame.
 
 \value{
 
-  An object of class 'metacontM' and 'metaM' with a list of following
+  An object of class '\code{metabinM}' and '\code{metaM}' with a list of following
   components:
 
   \item{matrix}{A matrix set out as to be drawn in the forest plot.}
@@ -120,19 +120,15 @@ meta <- metabin(event.e, n.e, event.c, n.c, data=Olkin95,
 
 Data <- meta2DF(meta, title = "Thrombolytic Therapy" , subtitle = "Olkin I (1995)",
                 rowOrder = "effect", decreasing = TRUE)
-                 
-matrix1 <- metaDF2Matrix(Data)
 
-matrix1
-
-matrix2 <- metaDF2Matrix(Data, order = c("study", "effect", "ci", "weight"),
+matrix1 <- metaDF2Matrix(Data, order = c("study", "effect", "ci", "weight"),
                          newCols = list(weight = makeColDesc(format = "\%.0f\%\%", colNames = "w.fixed")), 
                          stats = list(makeStatsDesc(labelNames = c("I2", "p", "tau2")),
                                       makeStatsDesc(labelNames = c("Q", "df"), emptyHeading = TRUE),
                                       makeLabelDesc(format = "Test for Overall Effect: Q = \%.f",
                                                     heteroNames = "Q.CMH")))
                                                     
-matrix2
+matrix1
 
 ## metabin: grouped studies
 Olkin95.2 <- Olkin95[1:10, ]
@@ -143,11 +139,11 @@ meta <- metabin(event.e, n.e, event.c, n.c, data=Olkin95.2, studlab = author,
 Data <- meta2DF(meta, title = "Thrombolytic Therapy", subtitle = "Group Studies for Olkin95", 
                 rowOrder = "effect", decreasing = TRUE) 
 
-matrix3 <- metaDF2Matrix(Data, groupLab = c("Group One", "Group Two", "Group Three", "Overall"),
+matrix2 <- metaDF2Matrix(Data, groupLab = c("Group One", "Group Two", "Group Three", "Overall"),
                          groupStats = list(makeStatsDesc(labelNames = c("I2", "p", "tau2")),
                                            makeStatsDesc(labelNames = "Q.CMH", emptyHeading = TRUE)))
                                            
-matrix3
+matrix2
 }
 
 \keyword{metaDF2Matrix}

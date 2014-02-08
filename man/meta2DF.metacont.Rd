@@ -5,8 +5,10 @@
 Convert 'metacont' Objects into Data Frames
 }
 \description{
-A function that turns objects of class \code{'metacont'} into a list of data frames 
-used for plotting. 
+  
+A function that turns objects of class \code{'metacont'} into a list of
+data frames used for plotting.
+
 }
 \usage{
 \method{meta2DF}{metacont}(meta, add = NULL, rowOrder = NULL, title = NULL, 
@@ -14,29 +16,49 @@ used for plotting.
 }
 \arguments{
   \item{meta}{An object of class \code{'metacont'}}.
-  \item{add}{List of vectors that can be added as columns to the data frame with 
-             corresponding values to each study row.}
+
+  \item{add}{List of vectors that can be added as columns to the data
+   frame with corresponding values to each study row.}
+
   \item{rowOrder}{Column name to order rows of studies by. }
-  \item{title}{Title of the meta-analysis to be shown on top of the plot}
-  \item{subtitle}{Subtitle of the meta-analysis to be shown under the title}
+
+  \item{title}{Title of the meta-analysis to be shown on top of the
+   plot}
+
+  \item{subtitle}{Subtitle of the meta-analysis to be shown under the
+   title}
+
   \item{\dots}{Further arguments from \code{order}.}
+
 }
+
 \details{
-In order to produce the plot, \code{\link{metaDF2Matrix.metacontDF}} must be 
-called after producing the \code{'metacontDF'} object from this function. 
-The data frame columns can be selected and ordered using 
-\code{\link{metaDF2Matrix.metacontDF}}. 
+In order to produce the plot, \code{\link{metaDF2Matrix.metacontDF}}
+must be called after producing the \code{'metacontDF'} object from this
+function.  The data frame columns can be selected and ordered using
+\code{\link{metaDF2Matrix.metacontDF}}.
 }
+
 \value{
-An object of class \code{'metacontDF'} and \code{'metaDF'} with a list of 
-following components:
-  \item{DF}{A data frame with studies as rows and study attributes as columns.}
-  \item{summary.fixed}{A data frame with attributes of fixed effects model.}
-  \item{summary.random}{A data frame with attributes of the random effects model.}
+An object of class \code{'metacontDF'} and \code{'metaDF'} with a list
+of following components:
+
+  \item{DF}{A data frame with studies as rows and study attributes as
+   columns.}
+  
+  \item{summary.fixed}{A data frame with attributes of fixed effects
+   model.}
+
+  \item{summary.random}{A data frame with attributes of the random
+   effects model.}
+
   \item{hetero}{Heterogenity- Q statistic, degrees of freedom, p-value.}
+
   \item{title}{Title of the meta-analysis.}
+
   \item{subtitle}{Subtitle of the meta-analysis.}
 }
+
 \seealso{
 \code{\link{metaDF2Matrix.metacontDF}},
 \code{\link{drawMeta.metacontM}}
