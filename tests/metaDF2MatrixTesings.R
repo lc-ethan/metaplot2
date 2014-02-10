@@ -1,3 +1,5 @@
+path <- "/Users/cenanningli/GoogleDrive/Stats Summer Scholarship/gitHub/metaplot2/R"
+metaplotfunction(path)
 ##==================metabin=================##
 library(meta)
 data(Olkin95)
@@ -89,5 +91,32 @@ matrix2 <- metaDF2Matrix(Data2, order = c("study", "effect", "ci", "w.fixed", "w
                          groupStats = list(hetero = makeStatsDesc(labelNames= "Q.CMH")))
 
 drawMeta(matrix2, plotCol = 3)
-                        
+                 
+##===========================metacont=============================##
+data(Fleiss93cont)
+
+## simple example
+meta3 <- metacont(n.e, mean.e, sd.e, n.c, mean.c, sd.c, data=Fleiss93cont, 
+                  sm="SMD", studlab = study)
+
+Data3 <- meta2DF(meta3, title = "Mental Health Treatment", subtitle = "Fleiss 1993",
+                 rowOrder = "effect", decreasing = TRUE) 
+Data3
+
+matrix3 <- metaDF2Matrix(Data3)
+
+drawMeta(matrix3)
+
+## grouped studies
+meta4 <- metacont(n.e, mean.e, sd.e, n.c, mean.c, sd.c, data=Fleiss93cont, 
+                  sm="SMD", byvar=c(1,2,1,1,2), bylab="group", studlab = study) 
+
+Data4 <- meta2DF(meta4, title = "Mental Health Treatment", subtitle = "Fleiss 1993",
+                 rowOrder = "effect", decreasing = TRUE)
+Data4
+
+matrix4 <- metaDF2Matrix(Data4)
+
+drawMeta(matrix4)
+
                         
