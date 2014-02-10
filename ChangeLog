@@ -1,0 +1,11 @@
+2014-01-25  Ethan  <cli113@aucklanduni.ac.nz>
+
+	* separate all the steps in metaDF2Matrix into functions,
+	therefore it is more easier to check the problem within each part.
+
+2014-01-18  Ethan  <cli113@aucklanduni.ac.nz>
+
+	* meta2DF have been reconstructed into one coding style and
+	meta2DF.metabin can handle the grouped studies at the moment. The
+	related documentations are also stored.
+

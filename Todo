@@ -1,0 +1,24 @@
+Clean up .Rd files. Some typos, spacing problems.
+
+Example from drawMeta. Is it complete at the end?
+
+Undocumented code objects:
+  'metaPlot.default' 'metaPlot.metaDF' 'metaPlot.metaM'
+
+Do we have the latest version of metaplot??
+
+Problems with hgap it seems
+Problems with stat:
+	 can we have an empty statistic so just a heading
+	 second line not indented as shown on pp.63--64
+
+Can we drop out the fixed effect???
+
+hetStat not responding to cex?
+
+Able to specify xlim?
+
+Allow meta2DF to accept data from other packages
+
+
+
