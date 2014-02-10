@@ -1,9 +1,14 @@
-Package: metaplot2
+Package: metaplot
 Type: Package
-Title: What the package does (short line)
+Title: Meta-analysis Forest Plots
 Version: 1.0
-Date: 2014-01-18
-Author: Who wrote it
-Maintainer: Who to complain to <yourfault@somewhere.net>
-Description: More about what it does (maybe more than one line)
-License: What license is it under?
+Date: 2012-06-18
+Author: Paul Murrell, David Scott, and Edna Lu 
+Maintainer: Edna Lu <elu005@aucklanduni.ac.nz>
+Description: Draws flexible forest plots. Provides methods for meta-analysis 
+             objects from 'rmeta', 'meta', and 'metafor'.
+Depends: grid
+Suggests: rmeta, meta, metafor
+License: GPL-2
+Repository: CRAN
+Packaged: 2013-12-04 22:10:20 UTC; dsco036
