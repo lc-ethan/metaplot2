@@ -340,8 +340,9 @@ meta2DF.meta.MH <- function(rmeta, add = NULL, sub = NULL, rowOrder = NULL,
   }
   
   ## step 5: heterogeneity information
-  hetero <- c(Q = rmeta$het[1], df = rmeta$het[2], p = rmeta$het[3], 
-              conf.level = rmeta$conf.level)
+  hetero <- c(Q = rmeta$het[1], df = rmeta$het[2], p = rmeta$het[3], tau2 = NA,
+              H = NA, H.lower = NA, H.upper = NA, I2 = NA, I2.lower = NA, 
+              I2.upper = NA, Q.CMH = NA, conf.level = rmeta$conf.level)
   
   ## step 6: set up the titles
   Title <- title
@@ -408,8 +409,9 @@ meta2DF.meta.DSL <- function(rmeta, add = NULL, sub = NULL, rowOrder = NULL,
   }
   
   ## step 5: heterogeneity information
-  hetero <- c(Q = rmeta$het[1], df = rmeta$het[2], p = rmeta$het[3], 
-              conf.level = rmeta$conf.level)
+  hetero <- c(Q = rmeta$het[1], df = rmeta$het[2], p = rmeta$het[3], tau2 = NA,
+              H = NA, H.lower = NA, H.upper = NA, I2 = NA, I2.lower = NA, 
+              I2.upper = NA, Q.CMH = NA, conf.level = rmeta$conf.level)
   
   ## step 6: set up the titles
   Title <- title
