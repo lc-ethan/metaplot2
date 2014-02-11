@@ -1,48 +1,53 @@
 ##=============main DF matrix generating function====================##
 mainGen <- function(df, order, newCols, roundCols, isSummary, metaClass) {
-  # step 1: check arguments
-  if (any(metaClass == "metacontDF")) {
-    if (!all(order %in% c(names(df), names(newCols), "ci", "msd.e", "msd.c"))) {
-      stop("unexpected column names input in the argument 'order'")
+  if (df == NULL) {
+    df
+  }
+  else {
+    # step 1: check arguments
+    if (any(metaClass == "metacontDF")) {
+      if (!all(order %in% c(names(df), names(newCols), "ci", "msd.e", "msd.c"))) {
+        stop("unexpected column names input in the argument 'order'")
+      }
     }
+    if (any(metaClass == "metabinDF")) {
+      if (!all(order %in% c(names(df), names(newCols), "ci"))) {
+        stop("unexpected column names input in the argument 'order'")
+      }  
+    }
+    
+    
+    if (!is.null(newCols)){
+      if (!all(sapply(newCols, inherits, what = "colDesc"))) {
+        stop("unexpected class listed under 'newCols'")
+      }   
+    }
+    
+    # step 2: add columns with specific format into main DF
+    if (any(metaClass == "metacontDF")) {
+      if (any(order %in% c("ci", "msd.e", "msd.c", names(newCols)))) {
+        df <- addCols(df = df, order = order, newCols = newCols, 
+                      isSummary = isSummary, metaClass = metaClass)
+      }  
+    }
+    
+    if (any(metaClass == "metabinDF")) {
+      if (any(order %in% c("ci", names(newCols)))) {
+        df <- addCols(df = df, order = order, newCols = newCols, 
+                      isSummary = isSummary, metaClass = metaClass)
+      }   
+    }
+    
+    
+    # step 3: extract the required columns to form a new data frame
+    df <- df[order]
+    
+    # step 4: round up the main DF
+    df <- roundUpCols(df = df, newCols = newCols, roundCols = roundCols,
+                      isSummary = isSummary, metaClass = metaClass)
+    
+    df     
   }
-  if (any(metaClass == "metabinDF")) {
-    if (!all(order %in% c(names(df), names(newCols), "ci"))) {
-      stop("unexpected column names input in the argument 'order'")
-    }  
-  }
-
-  
-  if (!is.null(newCols)){
-    if (!all(sapply(newCols, inherits, what = "colDesc"))) {
-      stop("unexpected class listed under 'newCols'")
-    }   
-  }
-  
-  # step 2: add columns with specific format into main DF
-  if (any(metaClass == "metacontDF")) {
-    if (any(order %in% c("ci", "msd.e", "msd.c", names(newCols)))) {
-      df <- addCols(df = df, order = order, newCols = newCols, 
-                    isSummary = isSummary, metaClass = metaClass)
-    }  
-  }
-  
-  if (any(metaClass == "metabinDF")) {
-    if (any(order %in% c("ci", names(newCols)))) {
-      df <- addCols(df = df, order = order, newCols = newCols, 
-                    isSummary = isSummary, metaClass = metaClass)
-    }   
-  }
-
- 
-  # step 3: extract the required columns to form a new data frame
-  df <- df[order]
-  
-  # step 4: round up the main DF
-  df <- roundUpCols(df = df, newCols = newCols, roundCols = roundCols,
-                    isSummary = isSummary, metaClass = metaClass)
-  
-  df  
 }
 ##==============================addCols===============================##
 
