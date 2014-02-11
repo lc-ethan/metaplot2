@@ -1,29 +1,29 @@
 #### function for setting main DF 
-forestDF <- function(object, study, n.e, event.e, mean.e, sd.e,
+forestDF <- function(meta, study, n.e, event.e, mean.e, sd.e,
                      n.c, event.c, mean.c, sd.c, effect, se, 
                      w.fixed, w.random, mean, lower, upper,
                      e.lower, e.upper, summary = FALSE){
-  if (inherits(object, "metabin")) {
+  if (inherits(meta, "metabin")) {
    DF <- data.frame(study = study, n.e = n.e, event.e = event.e,
                     n.c = n.c, event.c = event.c, effect = effect,
                     se = se, w.fixed = w.fixed, w.random = w.random,
                     mean = mean, lower = lower, upper = upper,
                     e.lower = e.lower, e.upper = e.upper)
    
-   if (!is.null(object$byvar)) {
-     if (summary == FALSE) DF <- cbind(DF, group = object$byvar)
+   if (!is.null(meta$byvar)) {
+     if (summary == FALSE) DF <- cbind(DF, group = meta$byvar)
      else DF <- cbind(DF, group = "")     
    } 
    
   } 
-  if (inherits(object, "metacont")) {
+  if (inherits(meta, "metacont")) {
    DF <-  data.frame(study = study, n.e = n.e, mean.e = mean.e, sd.e = sd.e,
                      n.c = n.c, mean.c = mean.c, sd.c = sd.c, effect = effect,
                      se = se, w.fixed = w.fixed, w.random = w.random,
                      mean = mean, lower = lower, upper = upper)
    
-   if (!is.null(object$byvar)) {
-     if (summary == FALSE) DF <- cbind(DF, group = object$byvar)
+   if (!is.null(meta$byvar)) {
+     if (summary == FALSE) DF <- cbind(DF, group = meta$byvar)
      else DF <- cbind(DF, group = "")   
    }
   }
@@ -33,7 +33,7 @@ forestDF <- function(object, study, n.e, event.e, mean.e, sd.e,
 
 
 #### set up generic function 
-meta2DF <- function(object, ...) UseMethod("meta2DF")
+meta2DF <- function(meta, ...) UseMethod("meta2DF")
 
 ##======metabin======##
 meta2DF.metabin <- function(meta, add = NULL, rowOrder = NULL,
