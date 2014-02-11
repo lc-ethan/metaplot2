@@ -22,26 +22,7 @@ heteroGen <- function(hetero, df, stats, newLabel, metaClass, overallSum) {
            df = df))
 }
 
-##==================================makeLabel====================================##
-
-## set up describtion format for label
-makeLabelDesc <- function(format, heteroNames) {
-  x <- list(format = format, heteroNames = heteroNames)
-  class(x) <- "labelDesc"
-  x  
-}
-
-## generate label with specified format
-makeLabel <- function(labelDesc, hetero) {
-  hetero.names <- names(hetero)
-  if (!all(labelDesc$heteroNames %in% hetero.names)) {
-    stop("unexpected hetero names in makeLabelDesc()")
-  }
-  hetero <- as.list(hetero)
-  args <- lapply(labelDesc$heteroNames, get, hetero)
-  args <- c(list(fmt = labelDesc$format), args)
-  do.call("sprintf", args)
-}
+##==================================addLabel====================================##
 
 ## generate a set of labels to be used in heteroGen()
 addLabel <- function(hetero, newLabel, metaClass, overallSum) { 
@@ -134,52 +115,7 @@ addLabel <- function(hetero, newLabel, metaClass, overallSum) {
   lapply(label.desc, makeLabel, hetero = hetero)
 }
 
-##==================================makeStats====================================##
-
-## set up describtion format for hetero information
-makeStatsDesc <- function(labelNames, heading, newStatsFormat, 
-                          emptyHeading = FALSE) {
-  if (!emptyHeading) {
-    if (missing(heading) && missing(newStatsFormat)) {
-      format <- paste("Heterogeneity:", paste(rep("%s", length(labelNames)),
-                                              collapse = " "))
-      x <- list(format = format, statsNames = labelNames)
-      class(x) <- "statsDesc"
-    }
-    
-    if (!missing(heading) && missing(newStatsFormat)) {
-      format <- paste(heading, paste(rep("%s", length(labelNames)), 
-                                     collapse = " "))
-      x <- list(format = format, statsNames = labelNames)
-      class(x) <- "statsDesc"
-    }
-    
-    if (!missing(newStatsFormat)) {
-      format <- newStatsFormat
-      x <- list(format = format, statsNames = labelNames)
-      class(x) <- "statsDesc"
-    }  
-    x   
-  }
-  else {
-    format <- paste(paste(rep(" ", 23), collapse = ""), 
-                    paste(rep("%s", length(labelNames)), collapse = " "))
-    x <- list(format = format, statsNames = labelNames)
-    class(x) <- "statsDesc" 
-    x
-  }
-}
-
-## generate hetero info with specified format
-makeStats <- function(statsDesc, label) {
-  label.names <- names(label)
-  if (!all(statsDesc$statsNames %in% label.names)) {
-    stop("unexpected label names in makeStatsDesc()")
-  }
-  args <- lapply(statsDesc$statsNames, get, label)
-  args <- c(list(fmt = statsDesc$format), args)
-  do.call("sprintf", args)  
-}
+##==================================addStats====================================##
 
 ## generate a set of hetero info to be used in heteroGen()
 addStats <- function(stats, label, hetero) {
