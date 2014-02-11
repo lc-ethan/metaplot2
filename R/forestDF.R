@@ -53,7 +53,7 @@ forestDF.meta.MH <- function(object, study, rate, lower, upper) {
 forestDF.meta.DSL <- function(object, study, rate, lower, upper) {
     DF <- data.frame(study = study, n.e = NA, event.e = NA, n.c = NA,
                      event.c = NA, effect = NA, se = NA, w.fixed = NA,
-                     w.random = NA, mean.OR = rate, lower = lower, 
+                     w.random = NA, mean = rate, lower = lower, 
                      upper = upper, e.lower = NA, e.upper = NA)
 
   rownames(DF) <- 1:nrow(DF)
