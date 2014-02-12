@@ -22,8 +22,8 @@ forestDF.metabin <- function(meta, study, n.e, event.e,
 }
 
 # metacont
-forestDF.metacont <- function(meta, study, n.e, mean.e, sd.e, n.c, sd.c, 
-                              effect, se, w.fixed, w.random, mean, 
+forestDF.metacont <- function(meta, study, n.e, mean.e, sd.e, n.c, mean.c, 
+                              sd.c, effect, se, w.fixed, w.random, mean, 
                               lower, upper, summary = FALSE){  
   
   DF <-  data.frame(study = study, n.e = n.e, mean.e = mean.e, sd.e = sd.e,
