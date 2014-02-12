@@ -37,8 +37,8 @@ matrixify <- function(df, order, newCols, roundCols, stats,
   
   round.sum <- rbind(summary$fixed, summary$random)
   rowNames <- c("fixed", "random")
-  whichShows <- sapply(round.sum, is.null)
-  rownames(round.sum) <- rowNames[whichShows]
+  whichShows <- sapply(summary, is.null)
+  rownames(round.sum) <- rowNames[!whichShows]
   matrix.sum <- as.matrix(round.sum)
     
   ## hetero information
