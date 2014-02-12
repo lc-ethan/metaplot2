@@ -296,14 +296,15 @@ meta2DF.meta.MH <- function(rmeta, add = NULL, sub = NULL, rowOrder = NULL,
   sum.meta <- summary(rmeta)
   ## step 1: set up main data frame
   DF <- forestDF(object = rmeta, study = rmeta$names, 
-                 rate = sum.meta$stats[, rmeta$statistic], 
-                 lower = sum.meta$stats[, "(lower "], 
-                 upper = sum.meta$stats[, paste(100 * rmeta$conf.level, "% upper)", sep = "")])
+                 rate = log(sum.meta$stats[, rmeta$statistic]), 
+                 lower = log(sum.meta$stats[, "(lower "]), 
+                 upper = log(sum.meta$stats[, paste(100 * rmeta$conf.level, 
+                                                    "% upper)", sep = "")]))
   
   ## step 2: set up fixed effect
-  summary.fixed <- forestDF(object = rmeta, study = "summary.fixed", 
-                            rate = sum.meta$MHci[2], lower = sum.meta$MHci[1], 
-                            upper = sum.meta$MHci[3])
+  summary.fixed <- forestDF(object = rmeta, study = "Fixed effect", 
+                            rate = log(sum.meta$MHci[2]), lower = log(sum.meta$MHci[1]), 
+                            upper = log(sum.meta$MHci[3]))
   
   ## step 3: set up random effect
   summary.random <- NULL
@@ -364,18 +365,19 @@ meta2DF.meta.DSL <- function(rmeta, add = NULL, sub = NULL, rowOrder = NULL,
   sum.meta <- summary(rmeta)
   ## step 1: set up main data frame
   DF <- forestDF(object = rmeta, study = rmeta$names, 
-                 rate = sum.meta$ors[, rmeta$statistic], 
-                 lower = sum.meta$ors[, "(lower "], 
-                 upper = sum.meta$ors[, paste(100 * rmeta$conf.level, "% upper)", sep = "")])
+                 rate = log(sum.meta$ors[, rmeta$statistic]), 
+                 lower = log(sum.meta$ors[, "(lower "]), 
+                 upper = log(sum.meta$ors[, paste(100 * rmeta$conf.level, 
+                                                  "% upper)", sep = "")]))
   
   
   ## step 2: set up fixed effect
   summary.fixed <- NULL
   
   ## step 3: set up random effect
-  summary.random <- forestDF(object = rmeta, study = "summary.random", 
-                             rate = sum.meta$ci[2], lower = sum.meta$ci[1], 
-                             upper = sum.meta$ci[3])
+  summary.random <- forestDF(object = rmeta, study = "Random effect", 
+                             rate = log(sum.meta$ci[2]), lower = log(sum.meta$ci[1]), 
+                             upper = log(sum.meta$ci[3]))
     
   ## step 4: substitue the columns
   if (!is.null(sub)) {
