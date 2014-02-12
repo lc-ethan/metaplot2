@@ -1,6 +1,6 @@
 ##=============main DF matrix generating function====================##
 mainGen <- function(df, order, newCols, roundCols, isSummary, metaClass) {
-  if (df == NULL) {
+  if (is.null(df)) {
     df
   }
   else {
