@@ -295,14 +295,18 @@ meta2DF.meta.MH <- function(rmeta, add = NULL, sub = NULL, rowOrder = NULL,
   
   sum.meta <- summary(rmeta)
   ## step 1: set up main data frame
-  DF <- forestDF(object = rmeta, study = rmeta$names, 
+  DF <- forestDF(object = rmeta, study = rmeta$names,
+                 effect = sum.meta$stats[, rmeta$statistic],
+                 se = if (rmeta$statistic == "OR") rmeta$selogOR else rmeta$selogRR,
                  rate = log(sum.meta$stats[, rmeta$statistic]), 
                  lower = log(sum.meta$stats[, "(lower "]), 
                  upper = log(sum.meta$stats[, paste(100 * rmeta$conf.level, 
                                                     "% upper)", sep = "")]))
   
   ## step 2: set up fixed effect
-  summary.fixed <- forestDF(object = rmeta, study = "Fixed effect", 
+  summary.fixed <- forestDF(object = rmeta, study = "Fixed effect",
+                            effect = sum.meta$MHci[2],
+                            se = rmeta$selogMH,
                             rate = log(sum.meta$MHci[2]), lower = log(sum.meta$MHci[1]), 
                             upper = log(sum.meta$MHci[3]))
   
@@ -365,6 +369,8 @@ meta2DF.meta.DSL <- function(rmeta, add = NULL, sub = NULL, rowOrder = NULL,
   sum.meta <- summary(rmeta)
   ## step 1: set up main data frame
   DF <- forestDF(object = rmeta, study = rmeta$names, 
+                 effect = sum.meta$ors[, rmeta$statistic],
+                 se = if (rmeta$statistic == "OR") rmeta$selogs else rmeta$selogs,
                  rate = log(sum.meta$ors[, rmeta$statistic]), 
                  lower = log(sum.meta$ors[, "(lower "]), 
                  upper = log(sum.meta$ors[, paste(100 * rmeta$conf.level, 
@@ -376,6 +382,8 @@ meta2DF.meta.DSL <- function(rmeta, add = NULL, sub = NULL, rowOrder = NULL,
   
   ## step 3: set up random effect
   summary.random <- forestDF(object = rmeta, study = "Random effect", 
+                             effect = sum.meta$ci[2],
+                             se = rmeta$selogDSL,
                              rate = log(sum.meta$ci[2]), lower = log(sum.meta$ci[1]), 
                              upper = log(sum.meta$ci[3]))
     

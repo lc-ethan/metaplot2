@@ -40,21 +40,21 @@ forestDF.metacont <- function(meta, study, n.e, mean.e, sd.e, n.c, mean.c,
 
 ##=========================rmeta========================##
 # meta.MH
-forestDF.meta.MH <- function(object, study, rate, lower, upper) {
+forestDF.meta.MH <- function(object, study, effect, se, rate, lower, upper) {
     DF <- data.frame(study = study, n.e = NA, event.e = NA, n.c = NA,
-                     event.c = NA, effect = NA, se = NA, w.fixed = NA,
+                     event.c = NA, effect = effect, se = se, w.fixed = NA,
                      w.random = NA, mean = rate, lower = lower, 
-                     upper = upper, e.lower = NA, e.upper = NA)
+                     upper = upper, e.lower = exp(lower), e.upper = exp(upper))
   rownames(DF) <- 1:nrow(DF)
   DF
 }
 
 # meta.DSL
-forestDF.meta.DSL <- function(object, study, rate, lower, upper) {
+forestDF.meta.DSL <- function(object, study, effect, se, rate, lower, upper) {
     DF <- data.frame(study = study, n.e = NA, event.e = NA, n.c = NA,
-                     event.c = NA, effect = NA, se = NA, w.fixed = NA,
+                     event.c = NA, effect = effect, se = se, w.fixed = NA,
                      w.random = NA, mean = rate, lower = lower, 
-                     upper = upper, e.lower = NA, e.upper = NA)
+                     upper = upper, e.lower = exp(lower), e.upper = exp(upper))
 
   rownames(DF) <- 1:nrow(DF)
   DF
