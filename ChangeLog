@@ -1,3 +1,12 @@
+2014-02-14  Ethan  <cli113@aucklanduni.ac.nz>
+
+	* There are problems with the drawing functions for other
+	packages. For rmeta, if the study for one group is over 12, the
+	vertical line for the effect will not be long enough. For metafor,
+	there is some problem with the x-axis. They are expected to be
+	corrected after finish the meta2DF for all of the objects in
+	metafor.
+
 2014-01-25  Ethan  <cli113@aucklanduni.ac.nz>
 
 	* separate all the steps in metaDF2Matrix into functions,
