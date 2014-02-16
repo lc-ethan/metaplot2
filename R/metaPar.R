@@ -51,3 +51,7 @@ metaParDefaults <- metaParDefaultsFuns$set
 ## reset default settings
 resetDefaults <- metaParDefaultsFuns$reset
 
+## print method
+print.metaPar <- function(x, ...) {
+  print(unlist(x))
+}
