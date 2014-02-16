@@ -63,18 +63,29 @@ forestDF.meta.DSL <- function(object, study, effect, se, rate, lower, upper) {
 ##==========================metafor===========================##
 # rma.mh
 forestDF.rma.mh <- function(object, study, n.e, event.e, n.c, event.c, 
-                            effect, se, mean, lower, upper) {
+                            w.fixed, effect, se, mean, lower, upper) {
   DF <- data.frame(study = study, n.e = n.e, event.e = event.e, n.c = n.c,
-                   event.c = event.c, effect = effect, se = se, w.fixed = NA,
+                   event.c = event.c, effect = effect, se = se, w.fixed = w.fixed,
                    w.random = NA, mean = mean, lower = lower, 
                    upper = upper, e.lower = exp(lower), e.upper = exp(upper))
   rownames(DF) <- 1:nrow(DF)
   DF
 }
 
-# rma.glmm
+# rma.peto
 forestDF.rma.peto <- function(object, study, n.e, event.e, n.c, event.c, 
-                              effect, se, mean, lower, upper) {
+                              w.fixed, effect, se, mean, lower, upper) {
+  DF <- data.frame(study = study, n.e = n.e, event.e = event.e, n.c = n.c,
+                   event.c = event.c, effect = effect, se = se, w.fixed = w.fixed,
+                   w.random = NA, mean = mean, lower = lower, 
+                   upper = upper, e.lower = exp(lower), e.upper = exp(upper))
+  rownames(DF) <- 1:nrow(DF)
+  DF
+}
+
+# rma.uni
+forestDF.rma.uni <- function(object, study, n.e, event.e, n.c, event.c, 
+                             effect, se, mean, lower, upper) {
   DF <- data.frame(study = study, n.e = n.e, event.e = event.e, n.c = n.c,
                    event.c = event.c, effect = effect, se = se, w.fixed = NA,
                    w.random = NA, mean = mean, lower = lower, 

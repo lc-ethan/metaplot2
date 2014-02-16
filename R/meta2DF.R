@@ -450,6 +450,7 @@ meta2DF.rma.mh <- function(rma, add = NULL, sub = NULL, rowOrder = NULL,
                  n.e = rma$ai, event.e = rma$ai + rma$bi,
                  n.c = rma$ci, event.c = rma$ci + rma$di,
                  effect = exp(CI$DF$mean), se = sqrt(rma$vi),
+                 w.fixed = weights(rma),
                  mean = CI$DF$mean, lower = CI$DF$lower, 
                  upper = CI$DF$upper)
   
@@ -459,6 +460,7 @@ meta2DF.rma.mh <- function(rma, add = NULL, sub = NULL, rowOrder = NULL,
                             n.c = NA, event.c = NA,
                             effect = exp(CI$FE$mean),
                             se = rma$se,
+                            w.fixed = 100,
                             mean = CI$FE$mean, lower = CI$FE$lower, 
                             upper = CI$FE$upper)
   
@@ -528,6 +530,7 @@ meta2DF.rma.peto <- function(rma, add = NULL, sub = NULL, rowOrder = NULL,
                  n.e = rma$ai, event.e = rma$ai + rma$bi,
                  n.c = rma$ci, event.c = rma$ci + rma$di,
                  effect = exp(CI$DF$mean), se = sqrt(rma$vi),
+                 w.fixed = weights(rma),
                  mean = CI$DF$mean, lower = CI$DF$lower, 
                  upper = CI$DF$upper)
   
@@ -536,7 +539,7 @@ meta2DF.rma.peto <- function(rma, add = NULL, sub = NULL, rowOrder = NULL,
                             n.e = NA, event.e = NA,
                             n.c = NA, event.c = NA,
                             effect = exp(CI$FE$mean),
-                            se = rma$se,
+                            se = rma$se, w.fixed = 100,
                             mean = CI$FE$mean, lower = CI$FE$lower, 
                             upper = CI$FE$upper)
   
