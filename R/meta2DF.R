@@ -597,3 +597,81 @@ meta2DF.rma.peto <- function(rma, add = NULL, sub = NULL, rowOrder = NULL,
 }
 
 
+##================rma.uni===================##
+meta2DF.rma.uni <- function(rma, add = NULL, sub = NULL, rowOrder = NULL,
+                            title = NULL, subtitle = NULL, ...) {
+  
+  CI <- ciGen(rma)
+  if (!any(names(sub) %in% "study")) {
+    study.names <- paste("study", 1:length(CI$DF$mean))
+  }
+  ## step 1: set up main data frame
+  DF <- forestDF(object = rma, study = study.names,
+                 n.e = rma$ai, event.e = rma$ai + rma$bi,
+                 n.c = rma$ci, event.c = rma$ci + rma$di,
+                 effect = exp(CI$DF$mean), se = sqrt(rma$vi),
+                 w.random = weights(rma),
+                 mean = CI$DF$mean, lower = CI$DF$lower, 
+                 upper = CI$DF$upper)
+  
+  ## step 2: set up fixed effect
+  summary.random <- forestDF(object = rma, study = "Fixed effect",
+                             n.e = NA, event.e = NA,
+                             n.c = NA, event.c = NA,
+                             effect = exp(CI$FE$mean),
+                             se = rma$se, w.random = NA,
+                             mean = CI$FE$mean, lower = CI$FE$lower, 
+                             upper = CI$FE$upper)
+  
+  ## step 3: set up random effect
+  summary.random <- NULL
+  
+  ## step 4: substitue the columns
+  if (!is.null(sub)) {
+    colNames <- names(sub)
+    if (!all(colNames %in% colnames(DF)))
+      stop("the columns to be substituted do not exist")
+    if (!all(sapply(sub, function(sub) length(sub$DF)) == nrow(DF)))
+      stop("the length of the substituted column differs from its correponding column")
+    DF[, names(sub)] <- sapply(sub, 
+                               function(sub, DF) {DF[, names(sub)] <- sub$DF},
+                               DF = DF)
+    summary.fixed[, names(sub)] <- sapply(sub, 
+                                          function(sub, DF) {DF[, names(sub)] <- sub$sum},
+                                          DF = DF)
+  }
+  
+  ## step 4: customization on the main data frame
+  # attach additional columns to the rmeta object
+  if (!is.null(add)) {
+    # attach the additional column to the main data frame
+    DF <- cbind(DF, add)
+    # attach the corresponding space to the summary data frame
+    addspace <- lapply(add, function(x){x <- ""})
+    summary.fixed <- cbind(summary.fixed, addspace)   
+  }
+  
+  # specify row orders
+  if (!is.null(rowOrder)) {
+    Order <- order(DF[, rowOrder], ...)
+    DF <- DF[Order, ]
+  }
+  
+  ## step 5: heterogeneity information
+  hetero <- c(Q = rma$QE, df = rma$k.yi - 1, p = rma$QEp, tau2 = rma$tau2,
+              H = NA, H.lower = NA, H.upper = NA, I2 = NA, I2.lower = NA, 
+              I2.upper = NA, Q.CMH = NA, conf.level = ifelse(rma$level > 1, rma$level / 100,
+                                                             rma$level))
+  
+  ## step 6: set up the titles
+  Title <- title
+  Subtitle <- subtitle
+  
+  ## step 7: the wrap up
+  output <- list(DF = DF, summary.fixed = summary.fixed, summary.random = summary.random,
+                 hetero = hetero, title = Title, subtitle = Subtitle)
+  
+  class(output) <- c("metabinDF", "metaDF")
+  
+  output  
+}
