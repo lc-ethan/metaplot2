@@ -1,6 +1,8 @@
-drawMeta <- function(matrix, ...) UseMethod("drawMeta")
+drawMeta <- function(matrix, ...) {
+    UseMethod("drawMeta")
+}
 
-##=====================metabin======================##
+###====================metabin=====================###
 drawMeta.metabinM <- function(matrix,
                               plotCol = NCOL(matrix$matrix) + 1,
                               plotHead = "",
@@ -16,8 +18,8 @@ drawMeta.metabinM <- function(matrix,
                               newpage = TRUE,
                               fit = TRUE,
                               abbreviate = FALSE,
-                              vpName = "Forest", ...
-){
+                              vpName = "Forest", ...)
+{
   drawMetaBasic(matrix,
                 plotCol = plotCol,
                 plotHead = plotHead,
@@ -34,10 +36,10 @@ drawMeta.metabinM <- function(matrix,
                 fit = fit,
                 abbreviate = abbreviate,
                 vpName = vpName, ...)
-  
+
 }
 
-##=====================metacont======================##
+###====================metacont=====================###
 drawMeta.metacontM <- function(matrix,
                                plotCol = NCOL(matrix$matrix) + 1,
                                plotHead = "",
@@ -53,8 +55,8 @@ drawMeta.metacontM <- function(matrix,
                                newpage = TRUE,
                                fit = TRUE,
                                abbreviate = FALSE,
-                               vpName = "Forest", ...
-){
+                               vpName = "Forest", ...)
+{
   drawMetaBasic(matrix,
                 plotCol = plotCol,
                 plotHead = plotHead,
@@ -71,31 +73,31 @@ drawMeta.metacontM <- function(matrix,
                 fit = fit,
                 abbreviate = abbreviate,
                 vpName = vpName, ...)
-  
+
 }
 
-##========================drawMetaBasic=============================##
+###=======================drawMetaBasic============================###
 drawMetaBasic <- function(matrix,  plotCol, plotHead, xlab, refLine,
                           plotWidth, plotPar, xlog, xticks, boxSize,
                           align, clip, newpage, fit,
-                          abbreviate, vpName, ...){
-  
+                          abbreviate, vpName, ...)
+{
+
   require("grid") || stop("'grid' package not found")
   require("rmeta") || stop("'rmeta' package not found")
-  
+
   ## assigning names to "matrix" components
   labeltext <- matrix$matrix
   mean <- matrix$plotDF[, "mean"]
   lower <- matrix$plotDF[, "lower"]
   upper <- matrix$plotDF[, "upper"]
   is.summary <- matrix$plotDF[, "is.summary"]
-  
+
   ## creating vectors of study(row) and column names to label grobs
   if (abbreviate) {
     studynames <- make.names(abbreviate(labeltext[, "study"], 6))
     colnames <- make.names(abbreviate(colnames(labeltext), 6))
-  } 
-  else {
+  } else {
     studynames <- make.names(labeltext[, "study"])
     colnames <- make.names(colnames(labeltext))
   }
@@ -108,8 +110,7 @@ drawMetaBasic <- function(matrix,  plotCol, plotHead, xlab, refLine,
   if (rownames(labeltext[1, , drop = FALSE]) == "title") {
     rowHeights <- unit(c(plotPar$title$cex, rep(lineScale, nr - 1), 0.5),
                        "lines")
-  }
-  else {
+  } else {
     rowHeights <- unit(c(rep(lineScale, nr), 0.5), "lines")
   }
   ## see if any row has NA
@@ -121,8 +122,7 @@ drawMetaBasic <- function(matrix,  plotCol, plotHead, xlab, refLine,
   if (fit) {
     scale <- fitPlot(labeltext, align, is.summary, plotPar,
                      plotWidth, plotCol, rowWidth, rowHeights)
-  } 
-  else {
+  } else {
     scale <- 1
   }
   ## generate labels and width/height calculations with scaling
@@ -132,10 +132,11 @@ drawMetaBasic <- function(matrix,  plotCol, plotHead, xlab, refLine,
   colWidth <- columnWidths(labels, nc, rowWidth, colgap = 3*scale,
                            plotCol, plotWidth)
   rowHeights <- scale * rowHeights
-  ########################## push viewports #########################
+  ## push viewports
   pushViewport(viewport(layout = grid.layout(nr + 1, nc*2 + 2,
                                              widths = colWidth,
-                                             heights = rowHeights), name = vpName))
+                                             heights = rowHeights),
+                        name = vpName))
   cwidth <- (upper - lower)
   xrange <- c(max(min(lower, na.rm = TRUE), clip[1]),
               min(max(upper, na.rm = TRUE), clip[2]))
@@ -143,7 +144,7 @@ drawMetaBasic <- function(matrix,  plotCol, plotHead, xlab, refLine,
   info <- info/max(info[!is.summary], na.rm = TRUE)
   info[is.summary] <- 1
   if (!is.null(boxSize)) info <- rep(boxSize, length = length(info))
-  ##### push viewports with layout to draw texts ####
+  ## push viewports with layout to draw texts
   for(j in 1:nc){
     for(i in 1:nr){
       if (!is.null(labels[[j]][[i]])){
@@ -152,8 +153,7 @@ drawMetaBasic <- function(matrix,  plotCol, plotHead, xlab, refLine,
                                 layout.pos.col = 2*j - 1,
                                 name = paste(labels[[j]][[i]]$name,
                                              i, j, sep = ".")))
-        } 
-        else {
+        } else {
           pushViewport(viewport(layout.pos.row = i,
                                 layout.pos.col = 2*(j + 1) - 1,
                                 name = paste(labels[[j]][[i]]$name,
@@ -164,7 +164,7 @@ drawMetaBasic <- function(matrix,  plotCol, plotHead, xlab, refLine,
       }
     }
   }
-  #### push viewport for plotting ####
+  ## push viewport for plotting ##
   pushViewport(viewport(layout.pos.col = plotCol*2 - 1, xscale = xrange,
                         gp = gpar(cex = scale), name = "Graph"))
   ## draw no effect line
@@ -188,8 +188,7 @@ drawMetaBasic <- function(matrix,  plotCol, plotHead, xlab, refLine,
         ticks <- unique(sort(c(0.5, 1, ticks)))
       }
       ticks <- ticks[ticks > 0]
-    } 
-    else{
+    } else{
       ticks <- xticks
     }
     if (length(ticks)){
@@ -207,13 +206,11 @@ drawMetaBasic <- function(matrix,  plotCol, plotHead, xlab, refLine,
       ## sprintf get rid of trailing zeros in label
       grid.draw(xax1)
     }
-  } 
-  else {
+  } else {
     if (is.null(xticks)){
       grid.xaxis(name = "xax",
                  gp = do.call("gpar", plotPar$axis))
-    } 
-    else if(length(xticks)) {
+    } else if(length(xticks)) {
       grid.xaxis(name = "xax", at = xticks,
                  gp = do.call("gpar", plotPar$axis))
     }
@@ -247,18 +244,17 @@ drawMetaBasic <- function(matrix,  plotCol, plotHead, xlab, refLine,
     if (is.summary[i]){
       drawSummaryCI(lower[i], mean[i], upper[i], info[i],
                     studynames[i], plotPar)
-    } 
-    else {
+    } else {
       drawNormalCI(lower[i], mean[i], upper[i], info[i],
                    studynames[i], plotPar)
     }
-    
+
     upViewport()
   }
   upViewport()
 }
 
-##================= Draw a non-summary rect-plus-CI =================##
+###================ Draw a non-summary rect-plus-CI ================###
 drawNormalCI <- function(LL, OR, UL, size,
                          studynames, plotPar) {
   size <- 0.75*size
@@ -266,7 +262,7 @@ drawNormalCI <- function(LL, OR, UL, size,
   cliplower <- convertX(unit(LL, "native"), "npc", valueOnly = TRUE) < 0
   box <- convertX(unit(OR, "native"), "npc", valueOnly = TRUE)
   clipbox <- (box < 0) || (box > 1)
-  ## Draw arrow if exceed col range
+  ## draw arrow if exceed col range
   ## convertX() used to convert between coordinate systems
   if (clipupper || cliplower){
     ends <- "both"
@@ -288,8 +284,7 @@ drawNormalCI <- function(LL, OR, UL, size,
                 x = unit(OR, "native"),
                 width = unit(size, "snpc"), height = unit(size, "snpc"),
                 gp = do.call("gpar", plotPar$box))
-  } 
-  else {
+  } else {
     ## Draw line white if totally inside rect
     grid.lines(name = paste("line", studynames, sep = "."),
                x = unit(c(LL, UL), "native"), y = 0.5,
@@ -307,14 +302,17 @@ drawNormalCI <- function(LL, OR, UL, size,
                  gp = do.call("gpar", plotPar$lines))
   }
 }
-##=================  Draw a summary "diamond" ====================##
-drawSummaryCI <- function(LL, OR, UL, size, studynames, plotPar) {
+
+###================  Draw a summary "diamond" ===================###
+drawSummaryCI <- function(LL, OR, UL, size, studynames, plotPar)
+{
   grid.polygon(name = paste("diamond", studynames, sep = "."),
                x = unit(c(LL, OR, UL, OR), "native"),
                y = unit(0.5 + c(0, 0.5*size, 0, -0.5*size), "npc"),
                gp = do.call("gpar", plotPar$diamond))
 }
-##================  Generates lists of text grobs ===============##
+
+###===============  Generates lists of text grobs ==============###
 generateTextGrobs <- function(labeltext, align, is.summary, plotPar,
                               studynames = NULL, colnames = NULL, scale = 1)
 {
@@ -323,8 +321,7 @@ generateTextGrobs <- function(labeltext, align, is.summary, plotPar,
   labels <- vector("list",nc)
   if (is.null(align)) {
     align <- c("l",rep("r",nc-1))
-  } 
-  else {
+  } else {
     align <- rep(align,length = nc)
   }
   is.summary <- rep(is.summary,length = nr)
@@ -341,15 +338,13 @@ generateTextGrobs <- function(labeltext, align, is.summary, plotPar,
         titlegp$cex <- scale*titlegp$cex
         gp <- do.call("gpar", titlegp)
         studynames[i] <- "title"
-      }
-      else if (rownames(labeltext[i,,drop = FALSE]) == "subtitle") {
+      } else if (rownames(labeltext[i,,drop = FALSE]) == "subtitle") {
         ## set up gp for subtitle
         subtitlegp <- plotPar$subtitle
         subtitlegp$cex <- scale*subtitlegp$cex
         gp <- do.call("gpar", subtitlegp)
         studynames[i] <- "subtitle"
-      }
-      else if (rownames(labeltext[i,,drop = FALSE]) == "hetero") {
+      } else if (rownames(labeltext[i,,drop = FALSE]) == "hetero") {
         ## set up gp for hetero statistics
         statgp <- plotPar$stat
         if (is.summary[i])
@@ -357,8 +352,7 @@ generateTextGrobs <- function(labeltext, align, is.summary, plotPar,
         statgp$cex <- scale*statgp$cex
         gp <- do.call("gpar", statgp)
         studynames[i] <- "hetero"
-      }
-      else {
+      } else {
         ## set up gp for text
         textgp <- plotPar$text
         if (is.summary[i])
@@ -373,7 +367,8 @@ generateTextGrobs <- function(labeltext, align, is.summary, plotPar,
   }
   return(labels)
 }
-##=================== Calculates width of labels =================##
+
+###================== Calculates width of labels ================###
 columnWidths <- function(labels, nc, rowWidth, colgap, plotCol, plotWidth)
 {
   colgap <- unit(colgap,"mm")
@@ -385,32 +380,30 @@ columnWidths <- function(labels, nc, rowWidth, colgap, plotCol, plotWidth)
                                   "grobwidth",
                                   labels[[i - 1]][rowWidth])), colgap)
     }
-  } 
-  else {
+  } else {
     colWidth <- unit.c(max(unit(rep(1, sum(rowWidth)), "grobwidth",
                                 labels[[1]][rowWidth])), colgap)
     for(i in 2:(nc+1)){
       colWidth <-
         if (i == plotCol) {
           unit.c(colWidth, plotWidth, colgap)
-        } 
-      else {
-        if (i < plotCol) {
-          unit.c(colWidth,
-                 max(unit(rep(1,sum(rowWidth)),
-                          "grobwidth",
-                          labels[[i]][rowWidth])), colgap)
-        } 
-        else {
-          unit.c(colWidth,
-                 max(unit(rep(1,sum(rowWidth)), "grobwidth",
-                          labels[[i-1]][rowWidth])), colgap) }
-      }
+        } else {
+          if (i < plotCol) {
+            unit.c(colWidth,
+                   max(unit(rep(1,sum(rowWidth)),
+                            "grobwidth",
+                            labels[[i]][rowWidth])), colgap)
+          } else {
+            unit.c(colWidth,
+                   max(unit(rep(1,sum(rowWidth)), "grobwidth",
+                            labels[[i-1]][rowWidth])), colgap) }
+        }
     }
   }
   return(colWidth)
 }
-##=============== Calculates scale to fit plot on page ===============##
+
+###============== Calculates scale to fit plot on page ==============###
 fitPlot <- function(labeltext, align, is.summary, plotPar,
                     plotWidth, plotCol, rowWidth, rowHeights)
 {
@@ -436,7 +429,7 @@ fitPlot <- function(labeltext, align, is.summary, plotPar,
     colWidth <- columnWidths(labels, nc, rowWidth, colgap = 3*wscale,
                              plotCol, plotWidth)
     textwidth <- convertWidth(sum(colWidth), "inches", valueOnly = TRUE) -
-      plotvalue
+                   plotvalue
   }
   ###### calculate height scale to fit current viewport #####
   heights <- rowHeights
@@ -446,13 +439,12 @@ fitPlot <- function(labeltext, align, is.summary, plotPar,
   while (totalheight > pageheight) {
     hscale <- hscale * pageheight / totalheight
     heights <- hscale * rowHeights
-    totalheight <- convertHeight(sum(heights),"inches", valueOnly = TRUE)
+    totalheight <- convertHeight(sum(heights), "inches", valueOnly = TRUE)
   }
   ## use the smaller scale
   if (hscale > wscale) {
     scale <- wscale
-  } 
-  else {
+  } else {
     scale <- hscale
   }
   scale
